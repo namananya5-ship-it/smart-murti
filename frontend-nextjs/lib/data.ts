@@ -8,7 +8,7 @@ export const devkitPaymentLink = "https://buy.stripe.com/";
 export const discordInviteLink = "https://discord.gg/";
 export const tiktokLink = "https://www.tiktok.com/";
 export const githubPublicLink = "https://github.com/";
-export const businessDemoLink = "https://Smartmurti.com/tample-contact";
+export const businessDemoLink = "https://smartmurti.com/tample-contact";
 export const feedbackFormLink = "https://forms.gle/";
 
 export const r2Url = "https://pub-cd736d767add4fecafea55c239c28497.r2.dev";
@@ -28,7 +28,7 @@ export const userFormPersonaPlaceholder =
     "Don't get me started on the guitar...I love to shred it like Hendrix. I also like a good challenge. Challenge me to be better and I'll rise to the occasion.";
 export const userFormAgeLabel = "Your Age";
 export const userFormAgeDescription =
-    "Users under 13 years old must have a parent or guardian to setup Elato.";
+    "Users under 13 years old must have a parent or guardian to setup Smart Murti.";
 export const userFormNameLabel = "Your Name";
 
 export const INITIAL_CREDITS = 50;

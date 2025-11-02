@@ -19,7 +19,7 @@ import { Emoji } from "./Emoji";
  *
  */
 
-const HeaderText = "Elato";
+const HeaderText = "Smart Murti";
 interface FrontPageProps {
     user?: User;
     allPersonalities: IPersonality[];

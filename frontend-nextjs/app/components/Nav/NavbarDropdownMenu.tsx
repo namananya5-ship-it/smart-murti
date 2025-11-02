@@ -121,6 +121,7 @@ export function NavbarDropdownMenu({ user, stars }: NavbarMenuButtonProps) {
                 <DropdownMenuGroup>
                     {user ? <LoggedInItems /> : <LoggedOutItems />}
                     <DropdownMenuSeparator />
+                    {/* Business demo link intentionally left in dropdown for admin users only (if needed) */}
                     <DropdownMenuItem>
                         <Link
                             href={businessDemoLink}
@@ -169,7 +170,7 @@ export function NavbarDropdownMenu({ user, stars }: NavbarMenuButtonProps) {
                 <DropdownMenuSeparator />
                 <div className="flex flex-row gap-2">
     <Link
-        href="https://Smartmurti.com/products"
+        href="https://smartmurti.com/products"
         passHref
         className="flex rounded-lg flex-row gap-2 items-center flex-1 bg-amber-100 dark:bg-amber-900/40 px-2 py-2 text-amber-800 dark:text-amber-200 hover:bg-yellow-100 dark:hover:bg-amber-900/60 transition-colors"
     >
@@ -187,7 +188,7 @@ export function NavbarDropdownMenu({ user, stars }: NavbarMenuButtonProps) {
         </div>
     </Link>
     <Link
-        href="https://elatoai.com/products/Smart-Mandir"
+        href="https://smartmurti.com/products/Smart-Mandir"
         passHref
         className="flex rounded-lg flex-row gap-2 items-center flex-1 bg-blue-100 dark:bg-blue-900/40 px-2 py-2 text-blue-800 dark:text-blue-200 hover:bg-blue-200 dark:hover:bg-blue-900/60 transition-colors"
     >

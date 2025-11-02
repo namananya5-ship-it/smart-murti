@@ -13,7 +13,7 @@ export default function TikTokEmbed() {
       // Create a new blockquote element
       const blockquote = document.createElement('blockquote');
       blockquote.className = 'tiktok-embed';
-      blockquote.setAttribute('cite', 'https://www.tiktok.com/@elatoai/video/7487016680925744406');
+  blockquote.setAttribute('cite', 'https://www.tiktok.com/@smartmurti/video/7487016680925744406');
       blockquote.setAttribute('data-video-id', '7487016680925744406');
       blockquote.style.maxWidth = '605px';
       blockquote.style.minWidth = '325px';

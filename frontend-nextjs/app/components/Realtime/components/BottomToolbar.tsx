@@ -74,7 +74,7 @@ function BottomToolbar({
           </TooltipTrigger>
           {isDisabled && (
             <TooltipContent>
-              {personality.provider === "gemini" ? <p>Talk to Gemini on your Elato device.</p> : <p>Add an API key in Settings to chat with your AI character.</p>}
+              {personality.provider === "gemini" ? <p>Talk to Gemini on your Smart Murti device.</p> : <p>Add an API key in Settings to chat with your AI character.</p>}
             </TooltipContent>
           )}
         </Tooltip>

@@ -1,15 +1,15 @@
 const OurAddressSign = () => {
     return (
         <p>
-            Akashdeep Deb, [
+            Naman Kharbanda, [
             <a
-                href="mailto:akash@elatoai.com"
+                href="mailto:naman@smartmurti.com"
                 className="text-blue-400 underline"
             >
-                akadeb97@gmail.com
+                naman@smartmurti.com
             </a>
             ] <br />
-            Founder, Elato AI
+            Founder, Smart Murti
             <br />
             <br />
             <span className="underline">US</span>

@@ -20,31 +20,31 @@ type Product = {
 const products: Product[] = [
     {
         id: "1",
-        name: "Elato AI Device",
-        description: "Transform any toy into an AI companion with any voice and personality with our advanced conversational AI",
+        name: "Smart Murti Device",
+        description: "Transform any Murti into an AI companion with any voice and personality with our advanced conversational AI",
         price: 55,
-		url: "https://elatoai.com/products",
+        url: "https://smartmurti.com/products",
         imageUrl: "/products/device1.jpeg",
-		features: [
-			"Works with any toy or plushie",
-			"Create unlimited AI characters",
-			"First month subscription FREE",
-			"Easy to set up in minutes",
-		  ]
+        features: [
+            "Works with any setup",
+            "Create unlimited AI personas",
+            "First month subscription FREE",
+            "Easy to set up in minutes",
+          ]
     },
     {
         id: "2",
-        name: "Elato AI Dev Kit",
+        name: "Smart Murti Dev Kit",
         description: "Create custom AI experiences with our developer-friendly kit, complete with sensors and tutorials",
         price: 65,
-		url: "https://elatoai.com/products/ai-devkit",
+        url: "https://smartmurti.com/products/ai-devkit",
         imageUrl: "/products/devkit1.png",
-		features: [
-			"Flash our open source code to your device",
-			"Flexible speaker and Lipo battery options",
-			"Set your own voice and personality",
-			"Attach a custom case"
-		  ]
+        features: [
+            "Flash our open source code to your device",
+            "Flexible speaker and Lipo battery options",
+            "Set your own voice and personality",
+            "Attach a custom case"
+          ]
     }
 ];
 
