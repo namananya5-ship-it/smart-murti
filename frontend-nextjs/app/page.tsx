@@ -3,6 +3,7 @@ import { ChevronRight, Home, ShieldCheck } from "lucide-react" // Changed icons 
 import { Button } from "@/components/ui/button"
 import Image from "next/image";
 import YoutubeDemo from "./components/LandingPage/YoutubeDemo";
+import DeviceImage from "./components/LandingPage/DeviceImage";
 import { PricingSection } from "./components/LandingPage/PricingSection";
 
 // --- Data for Murtis and Plans (based on your pitch deck) ---
@@ -49,7 +50,7 @@ export default async function LandingPage() {
                 </p>
                 <div className="flex items-center space-x-2 justify-center text-amber-500 my-2">
                   <ShieldCheck className="text-green-600" />
-                  <span className="ml-2 text-gray-700">Pioneering Faith-Tech in India</span>
+                  <span className="ml-2 text-gray-700">AI-powered devotional experiences that respond, guide, and inspire</span>
                 </div>
 
                 <div className="flex flex-col gap-4 sm:gap-8 pt-4">
@@ -81,41 +82,171 @@ export default async function LandingPage() {
           </div>
         </section>
 
-        <YoutubeDemo caption="Smart Murti AI Demo" />
-
-        {/* How It Works Section */}
-        <section className="w-full py-12 bg-gradient-to-b from-orange-50 to-white">
-          <div className="container px-4 md:px-6">
-            <div className="text-center mb-10">
-              <h2 className="text-3xl md:text-4xl font-bold mb-6 text-gray-800">
-                Experience Devotion Instantly
-              </h2>
-              <p className="text-lg text-gray-600 mt-2">Begin your divine conversations in 3 easy steps</p>
+        {/* Why Smart Murti? (Problem) */}
+        <section className="w-full py-12 bg-white">
+          <div className="container px-4 md:px-6 max-w-screen-lg mx-auto">
+            <div className="text-center mb-8">
+              <h2 className="text-3xl md:text-4xl font-bold">Why Smart Murti?</h2>
+              <p className="text-lg text-gray-600 mt-2">Connecting Generations in a Distracted World</p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              <div className="bg-white rounded-xl p-6 shadow-lg border border-orange-100 transform transition-transform hover:scale-105">
-                <div className="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center mb-4">
-                  <span className="text-xl font-bold text-orange-600">1</span>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <div>
+                <h3 className="text-xl font-semibold mb-2">For Children</h3>
+                <p className="text-gray-600">High screen time and short attention spans are causing a disconnect from cultural values.</p>
+              </div>
+              <div>
+                <h3 className="text-xl font-semibold mb-2">For Adults</h3>
+                <p className="text-gray-600">Modern life is filled with anxiety, burnout, and a loss of balance.</p>
+              </div>
+              <div>
+                <h3 className="text-xl font-semibold mb-2">For Elders</h3>
+                <p className="text-gray-600">Loneliness and isolation are common, separating them from traditional worship routines.</p>
+              </div>
+              <div>
+                <h3 className="text-xl font-semibold mb-2">For Families</h3>
+                <p className="text-gray-600">Passive worship with static idols or ad-filled apps lacks the personal connection and spiritual depth we crave.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Our Solution (For Every Devotee) */}
+        <section className="w-full py-12 bg-gradient-to-b from-gray-50 to-white">
+          <div className="container px-4 md:px-6 max-w-screen-lg mx-auto">
+            <div className="text-center mb-8">
+              <h2 className="text-3xl md:text-4xl font-bold">Bhakti in Every Voice</h2>
+              <p className="text-lg text-gray-600 mt-2">Smart Murti is an AI-powered devotional ecosystem that bridges this gap, transforming passive worship into an interactive spiritual experience.</p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <div>
+                <h4 className="text-lg font-semibold">For Children</h4>
+                <p className="text-gray-600">Inspires with interactive stories, quizzes, and moral learning through devotion.</p>
+              </div>
+              <div>
+                <h4 className="text-lg font-semibold">For Teenagers</h4>
+                <p className="text-gray-600">Offers a calm, judgment-free guide for inner strength and clarity.</p>
+              </div>
+              <div>
+                <h4 className="text-lg font-semibold">For Adults</h4>
+                <p className="text-gray-600">Restores peace, focus, and emotional grounding through daily spiritual conversation.</p>
+              </div>
+              <div>
+                <h4 className="text-lg font-semibold">For Elders</h4>
+                <p className="text-gray-600">Acts as a compassionate companion, bringing on-demand bhajans, aartis, and daily blessings.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <YoutubeDemo caption="Smart Murti AI Demo" />
+
+        {/* How It Works (Technology) */}
+        <section className="w-full py-12 bg-gradient-to-b from-orange-50 to-white">
+          <div className="container px-4 md:px-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
+              <div className="order-2 md:order-1">
+                <h2 className="text-3xl md:text-4xl font-bold mb-4">How It Works</h2>
+                <p className="text-gray-600 mb-6">Smart Murti is a real, tangible device paired with a devotional AI stack — designed to bring focus and connection back to your home or temple.</p>
+
+                <div className="space-y-4">
+                  <div className="flex items-start gap-4">
+                    <div className="w-10 h-10 rounded-full bg-orange-100 flex items-center justify-center font-bold">1</div>
+                    <div>
+                      <h4 className="font-semibold">Welcome Your Murti</h4>
+                      <p className="text-gray-600">Choose your AI-powered deity (Ganesh, Ram, Hanuman, and more).</p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start gap-4">
+                    <div className="w-10 h-10 rounded-full bg-orange-100 flex items-center justify-center font-bold">2</div>
+                    <div>
+                      <h4 className="font-semibold">Just Ask</h4>
+                      <p className="text-gray-600">Use your voice to request aarti, listen to a story, or ask a spiritual question.</p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start gap-4">
+                    <div className="w-10 h-10 rounded-full bg-orange-100 flex items-center justify-center font-bold">3</div>
+                    <div>
+                      <h4 className="font-semibold">Experience Peace</h4>
+                      <p className="text-gray-600">Receive personalized guidance, bhajans, and meditations from an AI trained on sacred scriptures.</p>
+                    </div>
+                  </div>
                 </div>
-                <h3 className="text-xl font-bold text-orange-900 mb-2">Welcome</h3>
-                <p className="text-gray-600">Place your Smart Murti in your home or temple</p>
+
+                <div className="mt-6 text-sm text-gray-600">
+                  <p className="font-medium mb-2">Prototype (labeled parts)</p>
+                  <ul className="list-disc pl-5 space-y-1">
+                    <li>Speaker — high-quality output tuned for devotional audio</li>
+                    <li>Microphone — far-field voice pickup for natural conversations</li>
+                    <li>LED — status and expressive lighting for mood and ritual cues</li>
+                  </ul>
+                </div>
               </div>
 
-              <div className="bg-white rounded-xl p-6 shadow-lg border border-orange-100 transform transition-transform hover:scale-105">
-                <div className="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center mb-4">
-                  <span className="text-xl font-bold text-orange-600">2</span>
+              <div className="order-1 md:order-2 flex items-center justify-center">
+                <div className="w-full max-w-md">
+                  <DeviceImage />
                 </div>
-                <h3 className="text-xl font-bold text-orange-900 mb-2">Activate</h3>
-                <p className="text-gray-600">Use our simple app to connect and choose your God</p>
               </div>
+            </div>
+          </div>
+        </section>
 
-              <div className="bg-white rounded-xl p-6 shadow-lg border border-orange-100 transform transition-transform hover:scale-105">
-                <div className="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center mb-4">
-                  <span className="text-xl font-bold text-orange-600">3</span>
-                </div>
-                <h3 className="text-xl font-bold text-orange-900 mb-2">Converse</h3>
-                <p className="text-gray-600">Start your spiritual dialogue - it's that simple!</p>
+        {/* Our Unfair Advantage (Trust) */}
+        <section className="w-full py-12 bg-white">
+          <div className="container px-4 md:px-6 max-w-screen-lg mx-auto">
+            <div className="text-center mb-6">
+              <h2 className="text-3xl md:text-4xl font-bold">Unlike Anything Else</h2>
+              <p className="text-gray-600 mt-2">General-purpose assistants don't understand devotion, and apps interrupt your prayer with ads. Our platform is different.</p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="p-4">
+                <h4 className="font-semibold">True Devotional AI</h4>
+                <p className="text-gray-600">Our AI is trained on the Bhagavad Gita, Vedas, and regional traditions — not just the open web.</p>
+              </div>
+              <div className="p-4">
+                <h4 className="font-semibold">Always Ad-Free</h4>
+                <p className="text-gray-600">We promise an uninterrupted spiritual experience — our subscription model means no ads.</p>
+              </div>
+              <div className="p-4">
+                <h4 className="font-semibold">Built for Community</h4>
+                <p className="text-gray-600">Designed for homes and temples, our platform fosters shared faith, not just individual use.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Our Products (Ecosystem of Faith) */}
+        <section className="w-full py-12 bg-gradient-to-b from-gray-50 to-white">
+          <div className="container px-4 md:px-6 max-w-screen-lg mx-auto">
+            <div className="text-center mb-8">
+              <h2 className="text-3xl md:text-4xl font-bold">An Ecosystem of Faith</h2>
+              <p className="text-gray-600 mt-2">Explore the offerings tailored for homes, temples, and advanced spiritual guidance.</p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="bg-white rounded-lg p-6 text-center">
+                <h3 className="font-bold text-lg">Smart Murti (For Homes)</h3>
+                <p className="text-gray-600 mt-2">The AI-powered companion for families and individuals.</p>
+                <Link href="/products">
+                  <Button className="mt-4">Explore</Button>
+                </Link>
+              </div>
+              <div className="bg-white rounded-lg p-6 text-center">
+                <h3 className="font-bold text-lg">Smart Mandir (For Temples)</h3>
+                <p className="text-gray-600 mt-2">A complete AI integration offering multi-user access and community features.</p>
+                <Link href="/temples">
+                  <Button className="mt-4">Learn More</Button>
+                </Link>
+              </div>
+              <div className="bg-white rounded-lg p-6 text-center">
+                <h3 className="font-bold text-lg">Smart Guru (Coming Soon)</h3>
+                <p className="text-gray-600 mt-2">Personalized guidance: Smart Jyotish, Smart Pandit, and Smart Yogi.</p>
+                <Button className="mt-4" disabled>Coming Soon</Button>
               </div>
             </div>
           </div>
