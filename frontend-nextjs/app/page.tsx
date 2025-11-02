@@ -27,9 +27,9 @@ export default async function LandingPage() {
         {/* Hero Section */}
         <section className="w-full py-12 md:py-20">
           <div className="container px-4 md:px-6 max-w-screen-lg mx-auto">
-            <div className="grid gap-6 md:grid-cols-2 lg:gap-12 items-center">
-              <div className="flex flex-col items-start md:items-start justify-center space-y-4">
-                <h1 className="text-5xl text-left md:text-6xl font-bold tracking-tight text-orange-900" style={{ lineHeight: '1.2' }}>
+            <div className="grid gap-6 lg:gap-12 items-center">
+              <div className="flex flex-col items-center justify-center space-y-4">
+                <h1 className="text-5xl text-center md:text-6xl font-bold tracking-tight text-orange-900" style={{ lineHeight: '1.2' }}>
                   <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-600 to-yellow-500">
                     Interactive, AI-Powered Devotion
                   </span>{" "} for Every Home and Temple
@@ -72,12 +72,7 @@ export default async function LandingPage() {
                 </div>
               </div>
 
-              {/* Hero image - device */}
-              <div className="hidden md:flex items-center justify-center">
-                <div className="w-full max-w-md">
-                  <Image src="/products/device1.jpeg" alt="Smart Murti device" width={600} height={600} className="rounded-2xl shadow-lg object-cover" />
-                </div>
-              </div>
+              {/* hero image removed per request; keep hero centered */}
             </div>
           </div>
         </section>
@@ -284,8 +279,9 @@ export default async function LandingPage() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               {divineCompanions.map((companion) => (
                 <div key={companion.name} className="bg-white rounded-xl p-6 shadow-lg border border-orange-100 text-center">
-                  {/* Remember to replace image paths */}
-                  <Image src={companion.imageSrc} alt={companion.name} width={150} height={150} className="mx-auto mb-4 rounded-full" />
+                  <div className="mx-auto mb-4 w-40 h-40 md:w-48 md:h-48 rounded-full overflow-hidden relative">
+                    <Image src={companion.imageSrc} alt={companion.name} fill className="object-cover" />
+                  </div>
                   <h3 className="text-xl font-bold text-orange-900 mb-2">{companion.name}</h3>
                   <p className="text-gray-600">{companion.description}</p>
                 </div>
