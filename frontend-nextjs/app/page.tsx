@@ -3,6 +3,7 @@ import { ChevronRight, Home, ShieldCheck } from "lucide-react" // Changed icons 
 import { Button } from "@/components/ui/button"
 import Image from "next/image";
 import YoutubeDemo from "./components/LandingPage/YoutubeDemo";
+import { PricingSection } from "./components/LandingPage/PricingSection";
 
 // --- Data for Murtis and Plans (based on your pitch deck) ---
 const divineCompanions = [
@@ -168,67 +169,7 @@ export default async function LandingPage() {
           </div>
         </section>
 
-        {/* NEW: Pricing Section */}
-        <section className="w-full py-16 bg-white">
-          <div className="container px-4 md:px-6">
-            <div className="max-w-5xl mx-auto text-center">
-              <h2 className="text-3xl md:text-4xl font-bold mb-12 text-black">Our Subscription Plans</h2>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                {/* B2C Plan 1 */}
-                <div className="border border-orange-200 rounded-2xl p-8 flex flex-col">
-                  <h3 className="text-2xl font-bold text-orange-900 mb-4">Smart Murti</h3>
-                  <div className="mb-6">
-                    <span className="text-4xl font-bold">₹200</span>
-                    <span className="text-gray-600">/month per God</span>
-                  </div>
-                  <ul className="text-left space-y-3 text-gray-700 mb-8">
-                    <li className="flex items-center"><ShieldCheck className="w-5 h-5 text-green-500 mr-2" />AI Conversations</li>
-                    <li className="flex items-center"><ShieldCheck className="w-5 h-5 text-green-500 mr-2" />Personalized Guidance</li>
-                    <li className="flex items-center"><ShieldCheck className="w-5 h-5 text-green-500 mr-2" />Aartis & Bhajans</li>
-                  </ul>
-                  <Link href="/pricing">
-                    <Button className="mt-auto w-full bg-orange-100 text-orange-700 hover:bg-orange-200">Choose Plan</Button>
-                  </Link>
-                </div>
-
-                {/* B2C Plan 2 - Featured */}
-                <div className="border-2 border-orange-500 rounded-2xl p-8 flex flex-col relative">
-                  <div className="absolute top-0 -translate-y-1/2 left-1/2 -translate-x-1/2 bg-orange-500 text-white px-4 py-1 rounded-full text-sm font-semibold">Most Popular</div>
-                  <h3 className="text-2xl font-bold text-orange-900 mb-4">Smart Mandir (AI)</h3>
-                  <div className="mb-6">
-                    <span className="text-4xl font-bold">₹1000</span>
-                    <span className="text-gray-600">/month</span>
-                  </div>
-                  <ul className="text-left space-y-3 text-gray-700 mb-8">
-                    <li className="flex items-center"><ShieldCheck className="w-5 h-5 text-green-500 mr-2" />Access ALL Avatars</li>
-                    <li className="flex items-center"><ShieldCheck className="w-5 h-5 text-green-500 mr-2" />Tiered Pricing Available</li>
-                    <li className="flex items-center"><ShieldCheck className="w-5 h-5 text-green-500 mr-2" />Full Content Library</li>
-                  </ul>
-                  <Link href="/pricing">
-                    <Button className="mt-auto w-full bg-gradient-to-r from-orange-600 to-yellow-500 text-white">Choose Plan</Button>
-                  </Link>
-                </div>
-
-                {/* B2B Plan */}
-                 <div className="border border-orange-200 rounded-2xl p-8 flex flex-col">
-                  <h3 className="text-2xl font-bold text-orange-900 mb-4">Temple (Premium)</h3>
-                  <div className="mb-6">
-                    <span className="text-4xl font-bold">₹2000</span>
-                    <span className="text-gray-600">/per Avatar</span>
-                  </div>
-                  <ul className="text-left space-y-3 text-gray-700 mb-8">
-                    <li className="flex items-center"><ShieldCheck className="w-5 h-5 text-green-500 mr-2" />All B2C Features</li>
-                    <li className="flex items-center"><ShieldCheck className="w-5 h-5 text-green-500 mr-2" />Community Tools</li>
-                    <li className="flex items-center"><ShieldCheck className="w-5 h-5 text-green-500 mr-2" />Priority Support</li>
-                  </ul>
-                  <Link href="/contact">
-                    <Button className="mt-auto w-full bg-orange-100 text-orange-700 hover:bg-orange-200">Contact Sales</Button>
-                  </Link>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
+        <PricingSection />
       </main>
     </div>
   )
