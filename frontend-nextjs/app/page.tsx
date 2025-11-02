@@ -8,21 +8,14 @@ import { PricingSection } from "./components/LandingPage/PricingSection";
 
 // --- Data for Murtis and Plans (based on your pitch deck) ---
 const divineCompanions = [
-  {
-    name: "Lord Ganesh",
-    description: "For wisdom, success, and overcoming all obstacles in your path.",
-    imageSrc: "/images/ganesh.png" // IMPORTANT: Replace with your actual image path
-  },
-  {
-    name: "Lord Ram",
-    description: "For guidance on dharma, leading a righteous life, and upholding duty.",
-    imageSrc: "/images/ram.png" // IMPORTANT: Replace with your actual image path
-  },
-  {
-    name: "Lord Hanuman",
-    description: "For immense strength, selfless service, and unwavering devotion.",
-    imageSrc: "/images/hanuman.png" // IMPORTANT: Replace with your actual image path
-  }
+  { name: "Lord Brahma", description: "Creator and source of knowledge.", imageSrc: "/images/god%20bhrama.png" },
+  { name: "Lord Ganesh", description: "For wisdom, success, and overcoming obstacles.", imageSrc: "/images/god%20ganesh.png" },
+  { name: "Lord Hanuman", description: "For immense strength, selfless service, and devotion.", imageSrc: "/images/god%20hanuman.png" },
+  { name: "Lord Ram", description: "For guidance on dharma and righteous living.", imageSrc: "/images/god%20ram.png" },
+  { name: "Sai Baba", description: "Compassionate guide for seekers of all faiths.", imageSrc: "/images/god%20sai%20baba.png" },
+  { name: "Lord Shiva", description: "For transformation, stillness, and deep meditation.", imageSrc: "/images/god%20shiva.png" },
+  { name: "Goddess Laxmi", description: "Blessings of prosperity and well-being.", imageSrc: "/images/godess%20laxmi.png" },
+  { name: "Goddess Parvati", description: "Compassion, devotion, and strength.", imageSrc: "/images/Godess%20Parvati.png" }
 ];
 
 export default async function LandingPage() {
@@ -34,9 +27,9 @@ export default async function LandingPage() {
         {/* Hero Section */}
         <section className="w-full py-12 md:py-20">
           <div className="container px-4 md:px-6 max-w-screen-lg mx-auto">
-            <div className="grid gap-6 lg:grid-cols-1 lg:gap-12 items-center">
-              <div className="flex flex-col items-center justify-center space-y-4">
-                <h1 className="text-5xl text-center md:text-6xl font-bold tracking-tight text-orange-900" style={{ lineHeight: '1.2' }}>
+            <div className="grid gap-6 md:grid-cols-2 lg:gap-12 items-center">
+              <div className="flex flex-col items-start md:items-start justify-center space-y-4">
+                <h1 className="text-5xl text-left md:text-6xl font-bold tracking-tight text-orange-900" style={{ lineHeight: '1.2' }}>
                   <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-600 to-yellow-500">
                     Interactive, AI-Powered Devotion
                   </span>{" "} for Every Home and Temple
@@ -78,6 +71,13 @@ export default async function LandingPage() {
                   </div>
                 </div>
               </div>
+
+              {/* Hero image - device */}
+              <div className="hidden md:flex items-center justify-center">
+                <div className="w-full max-w-md">
+                  <Image src="/products/device1.jpeg" alt="Smart Murti device" width={600} height={600} className="rounded-2xl shadow-lg object-cover" />
+                </div>
+              </div>
             </div>
           </div>
         </section>
@@ -91,21 +91,41 @@ export default async function LandingPage() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              <div>
-                <h3 className="text-xl font-semibold mb-2">For Children</h3>
-                <p className="text-gray-600">High screen time and short attention spans are causing a disconnect from cultural values.</p>
+              <div className="flex items-start gap-4">
+                <div className="w-12 h-12 flex items-center justify-center">
+                  <Image src="/images/feature1.png" alt="children icon" width={48} height={48} />
+                </div>
+                <div>
+                  <h3 className="text-xl font-semibold mb-2">For Children</h3>
+                  <p className="text-gray-600">High screen time and short attention spans are causing a disconnect from cultural values.</p>
+                </div>
               </div>
-              <div>
-                <h3 className="text-xl font-semibold mb-2">For Adults</h3>
-                <p className="text-gray-600">Modern life is filled with anxiety, burnout, and a loss of balance.</p>
+              <div className="flex items-start gap-4">
+                <div className="w-12 h-12 flex items-center justify-center">
+                  <Image src="/images/feature2.png" alt="adults icon" width={48} height={48} />
+                </div>
+                <div>
+                  <h3 className="text-xl font-semibold mb-2">For Adults</h3>
+                  <p className="text-gray-600">Modern life is filled with anxiety, burnout, and a loss of balance.</p>
+                </div>
               </div>
-              <div>
-                <h3 className="text-xl font-semibold mb-2">For Elders</h3>
-                <p className="text-gray-600">Loneliness and isolation are common, separating them from traditional worship routines.</p>
+              <div className="flex items-start gap-4">
+                <div className="w-12 h-12 flex items-center justify-center">
+                  <Image src="/images/feature3.png" alt="elders icon" width={48} height={48} />
+                </div>
+                <div>
+                  <h3 className="text-xl font-semibold mb-2">For Elders</h3>
+                  <p className="text-gray-600">Loneliness and isolation are common, separating them from traditional worship routines.</p>
+                </div>
               </div>
-              <div>
-                <h3 className="text-xl font-semibold mb-2">For Families</h3>
-                <p className="text-gray-600">Passive worship with static idols or ad-filled apps lacks the personal connection and spiritual depth we crave.</p>
+              <div className="flex items-start gap-4">
+                <div className="w-12 h-12 flex items-center justify-center">
+                  <Image src="/images/feature4.png" alt="families icon" width={48} height={48} />
+                </div>
+                <div>
+                  <h3 className="text-xl font-semibold mb-2">For Families</h3>
+                  <p className="text-gray-600">Passive worship with static idols or ad-filled apps lacks the personal connection and spiritual depth we crave.</p>
+                </div>
               </div>
             </div>
           </div>
