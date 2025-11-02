@@ -168,8 +168,14 @@ export default async function LandingPage() {
               </div>
 
               <div className="order-1 md:order-2 flex items-center justify-center">
-                <div className="w-full max-w-sm md:max-w-md relative h-56 md:h-72">
-                  <Image src="/images/Smart%20Murti%20Device.jpg" alt="Smart Murti device" fill className="object-contain rounded-2xl shadow-lg" />
+                <div className="mx-auto w-full max-w-xs md:max-w-md">
+                  <Image
+                    src="/images/Smart%20Murti%20Device.jpg"
+                    alt="Smart Murti device"
+                    width={700}
+                    height={420}
+                    className="w-full h-auto rounded-2xl shadow-lg object-contain"
+                  />
                 </div>
               </div>
             </div>
