@@ -70,7 +70,7 @@ export const PricingSection = () => {
 										<li className="flex items-center"><CheckCircle className="h-4 w-4 mr-2 text-amber-500" />Personalized Guidance</li>
 									</ul>
 									<div className="mt-4">
-										<Link href="/pricing">
+										<Link href={`/checkout?product=${product.id}&tier=${tier.id}`}>
 											<Button className="w-full bg-orange-600 hover:bg-orange-700 text-white">Choose Plan</Button>
 										</Link>
 									</div>
