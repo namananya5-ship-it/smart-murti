@@ -126,34 +126,7 @@ export default async function LandingPage() {
           </div>
         </section>
 
-        {/* Our Solution (For Every Devotee) */}
-        <section className="w-full py-12 bg-gradient-to-b from-gray-50 to-white">
-          <div className="container px-4 md:px-6 max-w-screen-lg mx-auto">
-            <div className="text-center mb-8">
-              <h2 className="text-3xl md:text-4xl font-bold">Bhakti in Every Voice</h2>
-              <p className="text-lg text-gray-600 mt-2">Smart Murti is an AI-powered devotional ecosystem that bridges this gap, transforming passive worship into an interactive spiritual experience.</p>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              <div>
-                <h4 className="text-lg font-semibold">For Children</h4>
-                <p className="text-gray-600">Inspires with interactive stories, quizzes, and moral learning through devotion.</p>
-              </div>
-              <div>
-                <h4 className="text-lg font-semibold">For Teenagers</h4>
-                <p className="text-gray-600">Offers a calm, judgment-free guide for inner strength and clarity.</p>
-              </div>
-              <div>
-                <h4 className="text-lg font-semibold">For Adults</h4>
-                <p className="text-gray-600">Restores peace, focus, and emotional grounding through daily spiritual conversation.</p>
-              </div>
-              <div>
-                <h4 className="text-lg font-semibold">For Elders</h4>
-                <p className="text-gray-600">Acts as a compassionate companion, bringing on-demand bhajans, aartis, and daily blessings.</p>
-              </div>
-            </div>
-          </div>
-        </section>
+        {/* Our Solution section removed per request */}
 
         <YoutubeDemo caption="Smart Murti AI Demo" />
 
@@ -191,19 +164,12 @@ export default async function LandingPage() {
                   </div>
                 </div>
 
-                <div className="mt-6 text-sm text-gray-600">
-                  <p className="font-medium mb-2">Prototype (labeled parts)</p>
-                  <ul className="list-disc pl-5 space-y-1">
-                    <li>Speaker — high-quality output tuned for devotional audio</li>
-                    <li>Microphone — far-field voice pickup for natural conversations</li>
-                    <li>LED — status and expressive lighting for mood and ritual cues</li>
-                  </ul>
-                </div>
+                {/* Prototype labeled-parts removed per request */}
               </div>
 
               <div className="order-1 md:order-2 flex items-center justify-center">
                 <div className="w-full max-w-md">
-                  <DeviceImage />
+                  <Image src="/images/Smart%20Murti%20Device.jpg" alt="Smart Murti device" width={700} height={500} className="rounded-2xl shadow-lg object-cover" />
                 </div>
               </div>
             </div>
