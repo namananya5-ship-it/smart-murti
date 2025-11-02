@@ -2,97 +2,101 @@ import { Button } from "@/components/ui/button";
 import { CheckCircle } from "lucide-react";
 import Link from "next/link";
 
-
-const pricingTiers = [
+const B2C_PRODUCTS = [
 	{
-	  name: "Basic",
-	  price: "Free",
-	  usage: "60 minutes of usage per month",
-	  features: [
-		"Basic AI characters",
-		"Limited voice interactions"
-	  ],
-	  popular: false
+		id: "smart-murti",
+		title: "Smart Murti (Monthly)",
 	},
 	{
-	  name: "Plus",
-	  price: "$10",
-	  period: "/month",
-	  usage: "60 minutes of usage per day",
-	  features: [
-		"All AI characters",
-		"Enhanced voice quality",
-		"Character customization"
-	  ],
-	  popular: true,
-	  link: "https://buy.stripe.com/14k6or0r00j900geV7",
+		id: "smart-mandir",
+		title: "Smart Mandir",
 	},
 	{
-	  name: "Pro",
-	  price: "$30",
-	  period: "/month",
-	  usage: "Unlimited usage",
-	  features: [
-		"All Plus features",
-		"Advanced AI capabilities",
-		"Priority support"
-	  ],
-	  popular: false,
-	  link: "https://buy.stripe.com/14k28b6Po7LB14k3cq"
-	}
-  ];
+		id: "smart-guru",
+		title: "Smart Guru",
+	},
+];
 
+const TIERS = [
+	{
+		id: "basic",
+		label: "Basic",
+		price: "Rs. 200",
+		duration: "1 hour",
+	},
+	{
+		id: "plus",
+		label: "Plus",
+		price: "Rs. 1500",
+		duration: "10 hour",
+	},
+	{
+		id: "premium",
+		label: "Premium",
+		price: "Rs. 3500",
+		duration: "24 Hours",
+	},
+];
 
 export const PricingSection = () => {
-    return (
-			  <div id="pricing" className="flex flex-col md:flex-row items-center justify-center gap-12 md:gap-6 mb-8">
-				{pricingTiers.map((tier, index) => (
-				  <div key={index} className={`
-					${tier.name === 'Basic' ? 'bg-white border-orange-200' : ''}
-					${tier.name === 'Plus' ? 'bg-white border-orange-400 transform relative' : ''}
-					${tier.name === 'Pro' ? 'bg-white border-orange-500 relative' : ''}
-					p-6 rounded-xl shadow-sm w-full md:w-1/3 transition-transform duration-300
-				  `}>
-					{tier.name === 'Plus' && (
-					  <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-yellow-400 text-black text-xs px-3 py-1 rounded-full font-medium">
-						Most Popular
-					  </div>
-					)}
-					{tier.name === 'Pro' && (
-					  <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-orange-600 text-white text-xs px-3 py-1 rounded-full font-medium">
-						Best Value
-					  </div>
-					)}
-					<h3 className={`text-xl font-bold mb-2 ${tier.name === 'Pro' ? 'text-orange-700' : 'text-gray-800'}`}>{tier.name}</h3>
-					<div className={`text-3xl font-bold mb-2 ${tier.name === 'Pro' ? 'text-orange-800' : 'text-gray-900'}`}>{tier.price}<span className="text-lg">{tier.period || ''}</span></div>
-					<p className="text-sm mb-4 text-gray-600">{tier.usage}</p>
-					<ul className="text-left text-sm mb-4 space-y-2 text-gray-700">
-					  {tier.features.map((feature, featureIndex) => (
-						<li key={featureIndex} className="flex items-center">
-						  <CheckCircle className={`h-4 w-4 mr-2 ${tier.name === 'Pro' ? 'text-orange-600' : 'text-orange-500'}`} />
-						  <span>{feature}</span>
-						</li>
-					  ))}
-					</ul>
-					{tier.name === 'Pro' && (
-					  <div className="mt-4 pt-2 border-t border-orange-100">
-						<span className="text-xs text-orange-600">Perfect for serious collectors and enthusiasts</span>
-					  </div>
-					)}
-					
-					{tier.name === 'Basic' ? (
-					  <Button disabled className="w-full mt-4 bg-gray-100 text-gray-500 cursor-not-allowed">
-					    Current Plan
-					  </Button>
-					) : (
-					  <Link href={tier.link || ""} passHref>
-					    <Button className={`w-full mt-4 ${tier.name === 'Plus' ? 'bg-yellow-400 hover:bg-yellow-500 text-black' : 'bg-orange-600 hover:bg-orange-700 text-white'}`}>
-					      Subscribe
-					    </Button>
-					  </Link>
-					)}
-				  </div>
+	return (
+		<div className="w-full">
+			<div className="text-center mb-8">
+				<h2 className="text-3xl md:text-4xl font-bold">Pricing</h2>
+				<p className="text-gray-600 mt-2">Choose a plan that fits your needs — for home devotees or temples.</p>
+			</div>
+
+			{/* B2C Products */}
+			<div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12 px-4 md:px-0">
+				{B2C_PRODUCTS.map((product) => (
+					<div key={product.id} className="bg-white border border-gray-100 rounded-2xl p-6 shadow-sm">
+						<h3 className="text-xl font-bold mb-4">{product.title}</h3>
+
+						<div className="space-y-4">
+							{TIERS.map((tier) => (
+								<div key={tier.id} className="p-4 border rounded-lg">
+									<div className="flex items-baseline justify-between">
+										<div>
+											<div className="text-lg font-semibold">{tier.label} {product.id === 'smart-mandir' && (
+												<span className="text-sm font-medium text-gray-500">{tier.id === 'basic' ? '(3 Deity included)' : tier.id === 'plus' ? '(7 Deity included)' : '(All Deity included)'}</span>
+											)}</div>
+											<div className="text-sm text-gray-600">{tier.duration}</div>
+										</div>
+										<div className="text-2xl font-bold">{tier.price}</div>
+									</div>
+									<ul className="mt-3 text-sm text-gray-700 space-y-2">
+										<li className="flex items-center"><CheckCircle className="h-4 w-4 mr-2 text-amber-500" />AI Conversations</li>
+										<li className="flex items-center"><CheckCircle className="h-4 w-4 mr-2 text-amber-500" />Aartis & Bhajans</li>
+										<li className="flex items-center"><CheckCircle className="h-4 w-4 mr-2 text-amber-500" />Personalized Guidance</li>
+									</ul>
+									<div className="mt-4">
+										<Link href="/pricing">
+											<Button className="w-full bg-orange-600 hover:bg-orange-700 text-white">Choose Plan</Button>
+										</Link>
+									</div>
+								</div>
+							))}
+						</div>
+					</div>
 				))}
-			  </div>
-    )
-}
+			</div>
+
+			{/* B2B Temple Plan */}
+			<div className="max-w-3xl mx-auto">
+				<div className="bg-white border border-gray-100 rounded-2xl p-8 shadow-sm">
+					<div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+						<div>
+							<h3 className="text-2xl font-bold">Temple (Enterprise)</h3>
+							<p className="text-gray-600 mt-2">Providing AI Setup Murti in all Available Deities Statue.</p>
+						</div>
+						<div className="w-full md:w-1/3">
+							<Link href="/contact">
+								<Button className="w-full bg-amber-500 hover:bg-amber-600 text-white">Contact Sales</Button>
+							</Link>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	);
+};
