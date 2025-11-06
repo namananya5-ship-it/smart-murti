@@ -113,11 +113,7 @@ const ModifyCharacterSheet: React.FC<ModifyCharacterSheetProps> = ({
                         </div>
                     )}
                     <div className="space-y-2 text-left w-full relative">
-                    <div className="absolute top-0 right-0">
-                    <Badge variant="outline">
-                        {openPersonality.provider}
-                    </Badge>
-                </div>
+                    {/* provider badge hidden from customers for privacy */}
                     <div className="flex flex-row items-center gap-2">
                         <h3 className="text-xl font-semibold">
                             {openPersonality.title}

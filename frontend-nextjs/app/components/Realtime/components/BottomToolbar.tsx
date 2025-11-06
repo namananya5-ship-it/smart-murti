@@ -74,7 +74,7 @@ function BottomToolbar({
           </TooltipTrigger>
           {isDisabled && (
             <TooltipContent>
-              {personality.provider === "gemini" ? <p>Talk to Gemini on your Smart Murti device.</p> : <p>Add an API key in Settings to chat with your AI character.</p>}
+              <p>Voice chat is not available. Check Settings to enable a voice provider or API key.</p>
             </TooltipContent>
           )}
         </Tooltip>

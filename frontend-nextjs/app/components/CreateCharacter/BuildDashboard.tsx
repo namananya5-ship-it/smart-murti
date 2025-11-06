@@ -297,9 +297,9 @@ const SettingsDashboard: React.FC<SettingsDashboardProps> = ({
                           <div className="flex flex-col text-center">
                             <span className="font-semibold text-gray-900">{voice.name}</span>
                             <span className="text-xs text-gray-600 mt-1">{voice.description}</span>
-                            <div className={`inline-flex items-center justify-center px-2 py-1 rounded-full text-xs font-medium mt-2 ${voice.provider === 'openai' ? 'bg-emerald-500 text-white' : 'bg-orange-500 text-white'
-                              }`}>
-                              {voice.provider === 'openai' ? 'OpenAI' : 'Gemini'}
+                            {/* provider hidden from customer-facing UI */}
+                            <div className="inline-flex items-center justify-center px-2 py-1 rounded-full text-xs font-medium mt-2 bg-gray-200 text-gray-800">
+                              Voice
                             </div>
                           </div>
                         </div>
