@@ -29,12 +29,7 @@ const sidebarNavItems: SidebarNavItem[] = [
             href: "/home/settings",
             icon: <Settings size={ICON_SIZE} />,
         },
-        {
-            title: "Create new",
-            href: "/home/create",
-            icon: <Plus size={ICON_SIZE+4} strokeWidth={2.5} />,
-            isPrimary: true,
-        },
+        // "Create new" removed from sidebar for now (hidden from frontend)
     ];
 
 export default async function RootLayout({
@@ -60,7 +55,6 @@ export default async function RootLayout({
 
     const mobileNavItems = [
         sidebarNavItems[0], // Playground
-        sidebarNavItems[2], // Create
         sidebarNavItems[1], // Settings
     ];
 
