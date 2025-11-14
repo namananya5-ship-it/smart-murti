@@ -3,6 +3,7 @@
 #include "OTA.h"
 #include "WifiManager.h"
 #include <driver/touch_sensor.h>
+#include "Button.h"
 
 #define TOUCH_THRESHOLD 28000
 #define REQUIRED_RELEASE_CHECKS                                                \
@@ -107,7 +108,7 @@ void getAuthTokenFromNVS() {
 
 void setupWiFi() {
   WifiManager.startBackgroundTask(
-      "ELATO-DEVICE"); // Run the background task to take care of our Wifi
+      "SMART MURTI"); // Run the background task to take care of our Wifi
   WifiManager.fallbackToSoftAp(
       true); // Run a SoftAP if no known AP can be reached
   WifiManager.attachWebServer(&webServer); // Attach our API to the Webserver
@@ -166,10 +167,8 @@ void touchTask(void *parameter) {
 }
 
 void setupDeviceMetadata() {
-  // factoryResetDevice();
-//   resetAuth();
-
-  deviceState = IDLE;
+      // factoryResetDevice();
+  resetAuth();  deviceState = IDLE;
 
   getAuthTokenFromNVS();
   getOTAStatusFromNVS();
