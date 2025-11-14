@@ -96,6 +96,121 @@ wss.on("connection", async (ws: WSWebSocket, payload: IPayload) => {
     }
 });
 
+server.on("request", async (req, res) => {
+    // Set CORS headers
+    res.setHeader("Access-Control-Allow-Origin", "*"); // Adjust this for production
+    res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+    res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+
+    if (req.method === "OPTIONS") {
+        res.writeHead(204);
+        res.end();
+        return;
+    }
+
+    const url = new URL(req.url!, `http://${req.headers.host}`);
+    const { pathname } = url;
+    const authToken = req.headers.authorization?.replace("Bearer ", "") ?? "";
+    const supabase = getSupabaseClient(authToken);
+
+    if (pathname === "/api/bhajans" && req.method === "GET") {
+        try {
+            const { data: bhajans, error } = await supabase.from("bhajans").select("*");
+            if (error) throw error;
+            res.writeHead(200, { "Content-Type": "application/json" });
+            res.end(JSON.stringify(bhajans));
+        } catch (error) {
+            res.writeHead(500, { "Content-Type": "application/json" });
+            res.end(JSON.stringify({ error: error.message }));
+        }
+    } else if (pathname.startsWith("/api/devices/") && pathname.endsWith("/bhajan")) {
+        const deviceId = pathname.split("/")[3];
+        if (req.method === "GET") {
+            try {
+                const { data: device, error: deviceError } = await supabase
+                    .from("devices")
+                    .select("selected_bhajan_id")
+                    .eq("device_id", deviceId)
+                    .single();
+
+                if (deviceError) throw deviceError;
+                if (!device.selected_bhajan_id) {
+                    res.writeHead(404, { "Content-Type": "application/json" });
+                    res.end(JSON.stringify({ error: "No bhajan selected for this device" }));
+                    return;
+                }
+
+                const { data: bhajan, error: bhajanError } = await supabase
+                    .from("bhajans")
+                    .select("url")
+                    .eq("id", device.selected_bhajan_id)
+                    .single();
+
+                if (bhajanError) throw bhajanError;
+
+                res.writeHead(200, { "Content-Type": "application/json" });
+                res.end(JSON.stringify({ url: bhajan.url }));
+            } catch (error) {
+                res.writeHead(500, { "Content-Type": "application/json" });
+                res.end(JSON.stringify({ error: error.message }));
+            }
+        } else if (req.method === "POST") {
+            let body = "";
+            req.on("data", chunk => {
+                body += chunk.toString();
+            });
+            req.on("end", async () => {
+                try {
+                    const { bhajan_id } = JSON.parse(body);
+                    const { error } = await supabase
+                        .from("devices")
+                        .update({ selected_bhajan_id: bhajan_id })
+                        .eq("device_id", deviceId);
+
+                    if (error) throw error;
+
+                    res.writeHead(200, { "Content-Type": "application/json" });
+                    res.end(JSON.stringify({ success: true }));
+                } catch (error) {
+                    res.writeHead(500, { "Content-Type": "application/json" });
+                    res.end(JSON.stringify({ error: error.message }));
+                }
+            });
+        }
+    }
+    else if (pathname.startsWith("/api/devices/by-mac/") && pathname.endsWith("/bhajan") && req.method === "GET") {
+        try {
+            const mac = pathname.split("/")[4];
+            const { data: device, error: deviceError } = await supabase
+                .from("devices")
+                .select("selected_bhajan_id")
+                .eq("mac_address", mac)
+                .single();
+
+            if (deviceError) throw deviceError;
+            if (!device || !device.selected_bhajan_id) {
+                res.writeHead(404, { "Content-Type": "application/json" });
+                res.end(JSON.stringify({ error: "No bhajan selected for this device" }));
+                return;
+            }
+
+            const { data: bhajan, error: bhajanError } = await supabase
+                .from("bhajans")
+                .select("url")
+                .eq("id", device.selected_bhajan_id)
+                .single();
+
+            if (bhajanError) throw bhajanError;
+
+            res.writeHead(200, { "Content-Type": "application/json" });
+            res.end(JSON.stringify({ url: bhajan.url }));
+        } catch (error) {
+            res.writeHead(500, { "Content-Type": "application/json" });
+            res.end(JSON.stringify({ error: error.message }));
+        }
+    }
+});
+
 server.on("upgrade", async (req, socket, head) => {
     console.log("upgrade");
     let user: IUser;

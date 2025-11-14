@@ -3,6 +3,9 @@
 #include "OTA.h"
 #include "WifiManager.h"
 #include <driver/touch_sensor.h>
+#include "Button.h"
+#include "BhajanButton.h"
+#include "BhajanPlayer.h"
 
 #define TOUCH_THRESHOLD 28000
 #define REQUIRED_RELEASE_CHECKS                                                \
@@ -107,7 +110,7 @@ void getAuthTokenFromNVS() {
 
 void setupWiFi() {
   WifiManager.startBackgroundTask(
-      "ELATO-DEVICE"); // Run the background task to take care of our Wifi
+      "SMART MURTI"); // Run the background task to take care of our Wifi
   WifiManager.fallbackToSoftAp(
       true); // Run a SoftAP if no known AP can be reached
   WifiManager.attachWebServer(&webServer); // Attach our API to the Webserver
@@ -165,11 +168,24 @@ void touchTask(void *parameter) {
   vTaskDelete(NULL);
 }
 
-void setupDeviceMetadata() {
-  // factoryResetDevice();
-//   resetAuth();
+// Polls the bhajan button and triggers download/play
+void buttonTask(void *parameter) {
+  BhajanButton *b = new BhajanButton(BUTTON_PIN);
+  b->begin();
 
-  deviceState = IDLE;
+  while (1) {
+    if (b->wasPressed()) {
+      Serial.println("Bhajan button pressed");
+      fetchAndPlayBhajanByMac();
+    }
+    vTaskDelay(pdMS_TO_TICKS(50));
+  }
+  vTaskDelete(NULL);
+}
+
+void setupDeviceMetadata() {
+      // factoryResetDevice();
+  resetAuth();  deviceState = IDLE;
 
   getAuthTokenFromNVS();
   getOTAStatusFromNVS();
@@ -229,6 +245,16 @@ void setup() {
                           4,                 // Priority
                           NULL,              // Handle
                           1                  // Core 1 (application core)
+  );
+
+  // Button polling task (lightweight)
+  xTaskCreatePinnedToCore(buttonTask,        // Function
+                          "Button Task",   // Name
+                          4096,             // Stack size
+                          NULL,             // Parameters
+                          2,                // Priority
+                          NULL,             // Handle
+                          0                 // Core 0
   );
 
   // Pin network task to Core 0 (protocol core)
