@@ -245,8 +245,6 @@ void micTask(void *parameter) {
 // networkTask -> webSocket.loop() -> webSocketEvent()
 void webSocketEvent(WStype_t type, const uint8_t *payload, size_t length)
 {
-    // Basic debug header for every event
-    Serial.printf("[WSc][event] type=%d length=%u\n", (int)type, (unsigned)length);
     switch (type)
     {
     case WStype_DISCONNECTED:
@@ -254,12 +252,7 @@ void webSocketEvent(WStype_t type, const uint8_t *payload, size_t length)
         deviceState = IDLE;
         break;
     case WStype_CONNECTED:
-        // payload contains the server url (if provided by the library)
-        if (payload && length > 0) {
-            Serial.printf("[WSc] Connected to url: %s\n", payload);
-        } else {
-            Serial.println("[WSc] Connected (no payload)");
-        }
+        Serial.printf("[WSc] Connected to url: %s\n", payload);
         deviceState = PROCESSING;
         break;
     case WStype_TEXT:
@@ -355,16 +348,7 @@ void webSocketEvent(WStype_t type, const uint8_t *payload, size_t length)
         break;
       }
     case WStype_ERROR:
-        if (payload && length > 0) {
-            // sometimes payload is a binary blob; print as string up to 256 bytes
-            size_t toPrint = min((size_t)length, (size_t)256);
-            Serial.print("[WSc] Error payload: ");
-            for (size_t i = 0; i < toPrint; i++) Serial.write(payload[i]);
-            Serial.println();
-        } else {
-            Serial.println("[WSc] Error (no payload)");
-        }
-        Serial.printf("[WSc] Error (type=%d, len=%u)\n", (int)type, (unsigned)length);
+        Serial.printf("[WSc] Error: %s\n", payload);    
         break;
     case WStype_FRAGMENT_TEXT_START:
     case WStype_FRAGMENT_BIN_START:
@@ -390,33 +374,11 @@ void websocketSetup(const String& server_domain, int port, const String& path)
 
     // webSocket.enableHeartbeat(30000, 15000, 3); // 30s ping interval, 15s timeout, 3 retries
 
-    // Diagnostic prints before attempting connection
-    Serial.println("[WSc] websocketSetup() starting...");
-    Serial.printf("[WSc] server='%s' port=%d path='%s' authTokenLen=%u\n", server_domain.c_str(), port, path.c_str(), (unsigned)authTokenGlobal.length());
-
-    // Simple TCP probe (helpful to identify DNS/TCP issues before handshake)
-    Serial.println("[WSc] Performing TCP probe...");
-    WiFiClient probeClient;
-    bool probeOk = false;
-    if (probeClient.connect(server_domain.c_str(), port)) {
-        Serial.println("[WSc] TCP probe connected");
-        probeClient.stop();
-        probeOk = true;
-    } else {
-        Serial.println("[WSc] TCP probe failed to connect");
-    }
-
     #ifdef DEV_MODE
-    Serial.println("[WSc] Using non-SSL begin() (DEV_MODE)");
     webSocket.begin(server_domain.c_str(), port, path.c_str());
     #else
-    Serial.println("[WSc] Using SSL beginSslWithCA() (PROD/ELATO)");
     webSocket.beginSslWithCA(server_domain.c_str(), port, path.c_str(), CA_cert);
     #endif
-
-    if (!probeOk) {
-        Serial.println("[WSc] Warning: TCP probe failed - handshake may time out if server unreachable");
-    }
 
     xSemaphoreGive(wsMutex);
 }

@@ -858,10 +858,10 @@ void WIFIMANAGER::attachUI() {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>YOUR SMART मूर्ति 😊</title>
+    <title>YOUR ELATO 😊</title>
     <style>
         :root {
-            --primary-color: #eb7725ff;
+            --primary-color: #2563eb;
             --bg-color: #f8fafc;
             --card-bg: #ffffff;
             --text-color: #1e293b;
@@ -984,7 +984,7 @@ void WIFIMANAGER::attachUI() {
 
         .status.info {
             background: #e0f2fe;
-            color: #000000ff;
+            color: #075985;
             display: block;
         }
 
@@ -1040,7 +1040,7 @@ void WIFIMANAGER::attachUI() {
 <body>
     <div class="container">
         <div class="card">
-            <h1>YOUR SMART मूर्ति 😊</h1>
+            <h1>YOUR ELATO DEVICE 😊</h1>
             <div id="status"></div>
             <button onclick="scanNetworks()">Scan for Networks</button>
             <button onclick="showConnectModal()">Manual Connect</button>

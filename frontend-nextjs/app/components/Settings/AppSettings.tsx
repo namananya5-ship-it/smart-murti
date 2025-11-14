@@ -14,7 +14,6 @@ import { createClient } from "@/utils/supabase/client";
 import React, { useCallback } from "react";
 import { doesUserHaveADevice, updateDevice } from "@/db/devices";
 import { useToast } from "@/components/ui/use-toast";
-import { NextResponse } from "next/server";
 
 interface AppSettingsProps {
     selectedUser: IUser;
@@ -58,25 +57,6 @@ const AppSettings: React.FC<AppSettingsProps> = ({
     const [volume, setVolume] = React.useState([
         selectedUser.device?.volume ?? 50,
     ]);
-
-    // Bhajans
-    const [bhajans, setBhajans] = React.useState<any[]>([]);
-    const [selectedBhajanId, setSelectedBhajanId] = React.useState<number | null>(selectedUser.device?.selected_bhajan_id ?? null);
-
-    const fetchBhajans = async () => {
-        try {
-            const res = await fetch('/api/bhajans');
-            if (!res.ok) throw new Error('Failed to fetch bhajans');
-            const data = await res.json();
-            setBhajans(data || []);
-        } catch (e) {
-            console.error('Error fetching bhajans', e);
-        }
-    };
-
-    React.useEffect(() => {
-        if (isConnected) fetchBhajans();
-    }, [isConnected]);
 
     const debouncedUpdateVolume = _.debounce(async () => {
         if (selectedUser.device?.device_id) {
@@ -187,38 +167,6 @@ const AppSettings: React.FC<AppSettingsProps> = ({
                         />
                     </div>
                     {isConnected && <div className="flex flex-col gap-4 mt-6">
-                        <div className="flex flex-col gap-4 mt-2">
-                            <label className="text-sm font-medium text-gray-700">Bhajan / Kirtan</label>
-                            <div className="flex flex-row gap-2 items-center">
-                                <select
-                                    value={selectedBhajanId ?? ''}
-                                    onChange={async (e) => setSelectedBhajanId(e.target.value ? Number(e.target.value) : null)}
-                                    className="p-2 border rounded bg-white"
-                                >
-                                    <option value="">(None)</option>
-                                    {bhajans.map((b) => (
-                                        <option key={b.id} value={b.id}>{b.name}</option>
-                                    ))}
-                                </select>
-                                <button
-                                    className="px-3 py-2 bg-blue-600 text-white rounded"
-                                    onClick={async () => {
-                                        if (!selectedUser.device?.device_id) return;
-                                        try {
-                                            await updateDevice(
-                                                supabase,
-                                                { selected_bhajan_id: selectedBhajanId },
-                                                selectedUser.device.device_id,
-                                            );
-                                            toast({ description: 'Bhajan set on device' });
-                                        } catch (err) {
-                                            console.error(err);
-                                            toast({ description: 'Failed to set bhajan', variant: 'destructive' });
-                                        }
-                                    }}
-                                >Set Bhajan</button>
-                            </div>
-                        </div>
                         <Label className="text-sm font-medium text-gray-700">
                             Device volume
                         </Label>
