@@ -14,6 +14,7 @@ import { createClient } from "@/utils/supabase/client";
 import React, { useCallback } from "react";
 import { doesUserHaveADevice, updateDevice } from "@/db/devices";
 import { useToast } from "@/components/ui/use-toast";
+import { BhajanSettings } from "@/components/Settings/BhajanSettings";
 
 interface AppSettingsProps {
     selectedUser: IUser;
@@ -101,6 +102,15 @@ const AppSettings: React.FC<AppSettingsProps> = ({
                     onSave={onSave}
                     onClickCallback={() => handleSave()}
                 />
+
+            {/* Bhajan Settings */}
+            {isConnected && (
+                <BhajanSettings
+                    userId={selectedUser.user_id}
+                    deviceId={selectedUser.device?.device_id}
+                    authToken={""} // TODO: Get auth token from context
+                />
+            )}
 
             <div className="space-y-4 max-w-screen-sm mt-12">
                 <h2 className="text-lg font-semibold border-b border-gray-200 pb-2">

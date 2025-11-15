@@ -1,26 +1,11 @@
-import { createServer } from "node:http";
-import { WebSocketServer } from "npm:ws";
-import type {
-    WebSocket as WSWebSocket,
-    WebSocketServer as _WebSocketServer,
-} from "npm:@types/ws";
-import { authenticateUser, elevenLabsApiKey } from "./utils.ts";
-import {
-    createFirstMessage,
-    createSystemPrompt,
-    getChatHistory,
-    getSupabaseClient,
-} from "./supabase.ts";
-import { SupabaseClient } from "@supabase/supabase-js";
-import { isDev } from "./utils.ts";
-import { connectToOpenAI } from "./models/openai.ts";
-import { connectToGemini } from "./models/gemini.ts";
-import { connectToElevenLabs } from "./models/elevenlabs.ts";
+// Integration Guide for server-deno/main.ts
+// Add these modifications to your existing main.ts file
+
+// 1. Add import for bhajan functions
 import { sendBhajanCommandToDevice } from "./bhajans.ts";
 
-const server = createServer();
-
-const wss: _WebSocketServer = new WebSocketServer({ noServer: true });
+// 2. Add bhajan message handling in the WebSocket connection handler
+// Find the switch(provider) block and add bhajan support before it:
 
 wss.on("connection", async (ws: WSWebSocket, payload: IPayload) => {
     const { user, supabase } = payload;
@@ -61,7 +46,18 @@ wss.on("connection", async (ws: WSWebSocket, payload: IPayload) => {
         }),
     );
 
+    // Add bhajan status update function
+    const sendBhajanStatus = (status: any) => {
+        if (ws.readyState === WebSocket.OPEN) {
+            ws.send(JSON.stringify({
+                type: "bhajan_status",
+                ...status
+            }));
+        }
+    };
+
     switch (provider) {
+        // Existing cases remain the same
         case "openai":
             await connectToOpenAI(
                 ws,
@@ -100,6 +96,9 @@ wss.on("connection", async (ws: WSWebSocket, payload: IPayload) => {
     }
 });
 
+// 3. Add bhajan message handling in the server upgrade handler
+// Add this after the existing authentication but before wss.handleUpgrade:
+
 server.on("upgrade", async (req, socket, head) => {
     console.log("upgrade");
     let user: IUser;
@@ -133,7 +132,7 @@ server.on("upgrade", async (req, socket, head) => {
     if (url.pathname.startsWith('/ws/device/') && url.pathname.includes('/bhajan')) {
         // Handle bhajan WebSocket connections
         const deviceId = url.pathname.split('/')[3];
-
+        
         wss.handleUpgrade(req, socket, head, (ws) => {
             // Handle bhajan-specific WebSocket connection
             ws.on('message', (data) => {
@@ -159,13 +158,3 @@ server.on("upgrade", async (req, socket, head) => {
         });
     }
 });
-
-if (isDev) { // deno run -A --env-file=.env main.ts
-    const HOST = Deno.env.get("HOST") || "0.0.0.0";
-    const PORT = Deno.env.get("PORT") || "8000";
-    server.listen(Number(PORT), HOST, () => {
-        console.log(`Audio capture server running on ws://${HOST}:${PORT}`);
-    });
-} else {
-    server.listen(8080);
-}
