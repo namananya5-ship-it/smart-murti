@@ -70,3 +70,20 @@ export const doesUserHaveADevice = async (
 
     return !!data;
 };
+
+export const getDeviceByUserId = async (
+    supabase: SupabaseClient,
+    userId: string,
+) => {
+    const { data, error } = await supabase
+        .from("devices")
+        .select("*")
+        .eq("user_id", userId)
+        .maybeSingle();
+
+    if (error) {
+        throw error;
+    }
+
+    return data;
+};

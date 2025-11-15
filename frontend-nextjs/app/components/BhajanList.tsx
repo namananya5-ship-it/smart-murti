@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { Play, Pause, Stop, Music } from 'lucide-react';
+import { Play, Pause, Square, Music } from 'lucide-react';
 
 interface Bhajan {
     id: number;
@@ -244,7 +244,7 @@ export function BhajanList({ deviceId, authToken, className = "" }: BhajanListPr
                                 className="p-2 bg-gray-500 text-white rounded hover:bg-gray-600 transition-colors"
                                 title="Stop"
                             >
-                                <Stop className="w-4 h-4" />
+                                <Square className="w-4 h-4" />
                             </button>
                         </div>
                     </div>

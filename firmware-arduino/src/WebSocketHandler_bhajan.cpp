@@ -36,7 +36,14 @@ void webSocketEvent(WStype_t type, uint8_t * payload, size_t length) {
                 const char* messageType = doc["type"];
                 
                 if (messageType) {
-                    if (strcmp(messageType, "bhajan_play") == 0) {
+                    if (strcmp(messageType, "auth_success") == 0) {
+                        const char* devId = doc["deviceId"];
+                        if (devId) {
+                            deviceId = String(devId);
+                            Serial.print("Device ID set: ");
+                            Serial.println(deviceId);
+                        }
+                    } else if (strcmp(messageType, "bhajan_play") == 0) {
                         handleBhajanPlayMessage(doc);
                     } else if (strcmp(messageType, "bhajan_control") == 0) {
                         handleBhajanControlMessage(doc);

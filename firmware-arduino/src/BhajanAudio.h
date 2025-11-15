@@ -37,7 +37,7 @@ void startBhajanPlayback(const char* url, const char* name, int id = -1);
 void pauseBhajan();
 void resumeBhajan();
 void stopBhajan();
-void handleBhajanCommand(const char* command, int bhajanId = -1);
+void handleBhajanCommand(const char* command, int bhajanId = -1, const char* url = nullptr);
 void streamBhajanAudio(const char* url);
 bool isBhajanPlaying();
 void setBhajanVolume(int volume);

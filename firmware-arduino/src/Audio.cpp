@@ -1,6 +1,7 @@
 #include "OTA.h"
 #include "Audio.h"
 #include "PitchShift.h"
+#include "BhajanAudio.h" // Add include for Bhajan Audio
 
 // WEBSOCKET
 SemaphoreHandle_t wsMutex;
@@ -336,6 +337,20 @@ void webSocketEvent(WStype_t type, const uint8_t *payload, size_t length)
             } else if (strcmp((char*)msg.c_str(), "SESSION.END") == 0) {
                 Serial.println("Received SESSION.END, going to sleep");
                 sleepRequested = true;
+            }
+        }
+
+        // Handle Bhajan Commands
+        if (strcmp((char*)type.c_str(), "bhajan_command") == 0) {
+            const char* command = doc["command"];
+            int bhajanId = doc["bhajan_id"] | -1; // Default to -1 if not present
+            const char* url = doc["url"]; // Can be null
+
+            if (command) {
+                Serial.printf("Received bhajan command: %s, for bhajan_id: %d\n", command, bhajanId);
+                handleBhajanCommand(command, bhajanId, url);
+            } else {
+                Serial.println("Bhajan command message received without a 'command' field.");
             }
         }
     }

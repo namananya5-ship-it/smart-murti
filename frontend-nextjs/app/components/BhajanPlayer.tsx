@@ -4,7 +4,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import {
     Play,
     Pause,
-    Stop,
+    Square,
     Volume2,
     Music,
     Clock,
@@ -129,6 +129,36 @@ export function BhajanPlayer({
         }
     };
 
+    // Send command to change bhajan
+    const changeBhajan = async (direction: 'next' | 'previous') => {
+        try {
+            setError(null);
+
+            const response = await fetch('/api/bhajans/change', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${authToken}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    deviceId,
+                    direction
+                })
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to change bhajan');
+            }
+
+            // The WebSocket should update the status, but we can trigger a manual refresh
+            // for a faster UI update.
+            setTimeout(() => {
+                fetchDeviceStatus();
+            }, 500);
+        } catch (err) {
+            setError(err instanceof Error ? err.message : 'Failed to change bhajan');
+        }
+    };
     // WebSocket connection for real-time updates
     const connectWebSocket = () => {
         if (wsRef.current?.readyState === WebSocket.OPEN) {
@@ -295,7 +325,7 @@ export function BhajanPlayer({
                                         className="p-1 text-gray-500 hover:text-gray-600 transition-colors"
                                         title="Stop"
                                     >
-                                        <Stop className="w-4 h-4" />
+                                        <Square className="w-4 h-4" />
                                     </button>
                                 </div>
                             )}
@@ -347,10 +377,7 @@ export function BhajanPlayer({
                                     {/* Playback Controls */}
                                     <div className="flex items-center justify-center space-x-3 mb-4">
                                         <button
-                                            onClick={() => {
-                                                // TODO: Implement previous bhajan
-                                                console.log('Previous bhajan');
-                                            }}
+                                            onClick={() => changeBhajan('previous')}
                                             className="p-2 text-gray-500 hover:text-gray-700 transition-colors"
                                             title="Previous"
                                         >
@@ -376,10 +403,7 @@ export function BhajanPlayer({
                                         )}
 
                                         <button
-                                            onClick={() => {
-                                                // TODO: Implement next bhajan
-                                                console.log('Next bhajan');
-                                            }}
+                                            onClick={() => changeBhajan('next')}
                                             className="p-2 text-gray-500 hover:text-gray-700 transition-colors"
                                             title="Next"
                                         >

@@ -11,6 +11,7 @@ import {
     Blocks,
     Gamepad2,
     Cpu,
+    Music,
 } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -56,16 +57,28 @@ export function NavbarDropdownMenu({ user, stars }: NavbarMenuButtonProps) {
 
     const LoggedInItems: React.FC = () => {
         return (
-            <DropdownMenuItem>
-                <Link
-                    href="/home"
-                    passHref
-                    className="flex flex-row gap-2 w-full"
-                >
-                    <HomeIcon size={ICON_SIZE} />
-                    <span>Home</span>
-                </Link>
-            </DropdownMenuItem>
+            <>
+                <DropdownMenuItem>
+                    <Link
+                        href="/home"
+                        passHref
+                        className="flex flex-row gap-2 w-full"
+                    >
+                        <HomeIcon size={ICON_SIZE} />
+                        <span>Home</span>
+                    </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem>
+                    <Link
+                        href="/protected/bhajans"
+                        passHref
+                        className="flex flex-row gap-2 w-full"
+                    >
+                        <Music size={ICON_SIZE} />
+                        <span>Bhajans</span>
+                    </Link>
+                </DropdownMenuItem>
+            </>
         );
     };
 

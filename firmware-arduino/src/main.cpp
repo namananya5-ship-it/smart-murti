@@ -4,6 +4,71 @@
 #include "WifiManager.h"
 #include <driver/touch_sensor.h>
 #include "Button.h"
+#include "BhajanAudio.h"
+#include "WebSocketHandler.h"
+
+// Task handles
+extern TaskHandle_t speakerTaskHandle;
+extern TaskHandle_t micTaskHandle;
+extern TaskHandle_t networkTaskHandle;
+TaskHandle_t bhajanAudioTaskHandle = NULL;
+
+// Global variables
+int currentVolume = 100;
+float pitchFactor = 1.0;
+String deviceId = "";
+bool isWebSocketConnected = false;
+
+// Function prototypes
+void bhajanButtonHandler();
+void initBhajanSystem();
+void createBhajanTask();
+
+// Audio task modification to handle bhajan/AI audio conflicts
+void audioStreamTask(void *parameter) {
+    while (1) {
+        // Check if bhajan is playing - if so, pause AI audio
+        if (isBhajanPlaying()) {
+            // Pause AI audio output
+            i2s_stop(I2S_PORT_OUT);
+            vTaskDelay(100 / portTICK_PERIOD_MS);
+            continue;
+        }
+        
+        // Resume AI audio if bhajan stopped
+        if (!isBhajanPlaying()) {
+            i2s_start(I2S_PORT_OUT);
+        }
+        
+        // Continue with original audio stream logic
+        // ... (existing audioStreamTask code)
+        
+        vTaskDelay(10 / portTICK_PERIOD_MS);
+    }
+}
+
+// Network task with bhajan status updates
+void networkTask(void *parameter) {
+    // Existing network task setup
+    String path = "/ws/device/" + String(deviceId);
+    websocketSetup(ws_server, ws_port, path.c_str());
+    
+    while (1) {
+        // Handle WebSocket
+        webSocket.loop();
+        
+        // Send periodic bhajan status updates
+        static uint32_t lastBhajanUpdate = 0;
+        uint32_t now = millis();
+        
+        if (now - lastBhajanUpdate > 5000) {
+            sendBhajanStatusUpdate();
+            lastBhajanUpdate = now;
+        }
+        
+        vTaskDelay(10 / portTICK_PERIOD_MS);
+    }
+}
 
 #define TOUCH_THRESHOLD 28000
 #define REQUIRED_RELEASE_CHECKS                                                \
@@ -131,37 +196,43 @@ void touchTask(void *parameter) {
   bool touched = false;
   unsigned long pressStartTime = 0;
   unsigned long lastTouchTime = 0;
-  const unsigned long LONG_PRESS_DURATION = 500; // 500ms for long press
+  const unsigned long LONG_PRESS_DURATION = 500;
+  const unsigned long BHAJAN_CONTROL_DURATION = 200; // Shorter for bhajan control
 
   while (1) {
-    // Read the touch sensor
     uint32_t touchValue = touchRead(TOUCH_PAD_NUM2);
     bool isTouched = (touchValue > TOUCH_THRESHOLD);
     unsigned long currentTime = millis();
 
     // Initial touch detection
-    if (isTouched && !touched &&
-        (currentTime - lastTouchTime > TOUCH_DEBOUNCE_DELAY)) {
-      touched = true;
-      pressStartTime = currentTime; // Start timing the press
-      lastTouchTime = currentTime;
+    if (isTouched && !touched && (currentTime - lastTouchTime > TOUCH_DEBOUNCE_DELAY)) {
+        touched = true;
+        pressStartTime = currentTime;
+        lastTouchTime = currentTime;
     }
 
-    // Check for long press while touched
+    // Check for different touch durations
     if (touched && isTouched) {
-      if (currentTime - pressStartTime >= LONG_PRESS_DURATION) {
-        sleepRequested =
-            true; // Only enter sleep after 500ms of continuous touch
-      }
+        unsigned long pressDuration = currentTime - pressStartTime;
+        
+        if (pressDuration >= LONG_PRESS_DURATION) {
+            // Long press - sleep mode
+            sleepRequested = true;
+        } else if (pressDuration >= BHAJAN_CONTROL_DURATION && pressDuration < LONG_PRESS_DURATION) {
+            // Medium press - bhajan control
+            if (!sleepRequested) {
+                handleBhajanButtonPress();
+            }
+        }
     }
 
     // Release detection
     if (!isTouched && touched) {
-      touched = false;
-      pressStartTime = 0; // Reset the press timer
+        touched = false;
+        pressStartTime = 0;
     }
 
-    vTaskDelay(20); // Reduced from 50ms to 20ms for better responsiveness
+    vTaskDelay(20 / portTICK_PERIOD_MS);
   }
   vTaskDelete(NULL);
 }
@@ -188,6 +259,10 @@ void setup() {
   // SETUP
   setupDeviceMetadata();
   wsMutex = xSemaphoreCreateMutex();
+  bhajanMutex = xSemaphoreCreateMutex();
+
+  // Initialize bhajan system
+  initBhajanSystem();
 
 // INTERRUPT
 #ifdef TOUCH_MODE
@@ -199,7 +274,10 @@ void setup() {
   Button *btn = new Button(BUTTON_PIN, false);
   btn->attachLongPressUpEventCb(&onButtonLongPressUpEventCb, NULL);
   btn->attachDoubleClickEventCb(&onButtonDoubleClickCb, NULL);
-  btn->detachSingleClickEvent();
+  btn->attachClickEventCb([](void* btn, void* data) {
+      // Single click handles bhajan control
+      handleBhajanButtonPress();
+  }, NULL);
 #endif
 
   // Pin audio tasks to Core 1 (application core)
@@ -217,7 +295,7 @@ void setup() {
                           4096,            // Stack size
                           NULL,            // Parameters
                           3,               // Priority
-                          NULL,            // Handle
+                          &speakerTaskHandle, // Handle
                           1                // Core 1 (application core)
   );
 
@@ -226,7 +304,7 @@ void setup() {
                           4096,              // Stack size
                           NULL,              // Parameters
                           4,                 // Priority
-                          NULL,              // Handle
+                          &micTaskHandle,    // Handle
                           1                  // Core 1 (application core)
   );
 
@@ -240,13 +318,95 @@ void setup() {
                           0                         // Core 0 (protocol core)
   );
 
+  // Create bhajan audio task
+  createBhajanTask();
+
   // WIFI
   setupWiFi();
+
+  // Initialize WebSocket with bhajan support
+  initWebSocketWithBhajanSupport();
 }
 
 void loop() {
   processSleepRequest();
+  
   if (otaState == OTA_IN_PROGRESS) {
     loopOTA();
   }
+  
+  // Handle bhajan-specific tasks
+  static uint32_t lastStatusUpdate = 0;
+  uint32_t now = millis();
+  
+  // Send periodic status updates
+  if (now - lastStatusUpdate > 30000) {
+      sendEnhancedStatusUpdate();
+      lastStatusUpdate = now;
+  }
+  
+  // Handle touch input for bhajan control
+#ifdef TOUCH_MODE
+  static bool wasTouched = false;
+  uint32_t touchValue = touchRead(TOUCH_PAD_NUM2);
+  bool isTouched = (touchValue > TOUCH_THRESHOLD);
+  
+  if (isTouched && !wasTouched) {
+      // Touch detected - handle bhajan control
+      handleBhajanButtonPress();
+      wasTouched = true;
+  } else if (!isTouched && wasTouched) {
+      wasTouched = false;
+  }
+#endif
+}
+
+// Initialize bhajan system
+void initBhajanSystem() {
+    // Load default bhajan from preferences
+    preferences.begin("bhajan", true);
+    int defaultBhajanId = preferences.getInt("default_bhajan_id", -1);
+    preferences.end();
+    
+    if (defaultBhajanId > 0) {
+        currentBhajan.id = defaultBhajanId;
+        Serial.print("Default bhajan ID loaded: ");
+        Serial.println(defaultBhajanId);
+    }
+    
+    // Initialize audio system
+    initBhajanAudio();
+    
+    Serial.println("Bhajan system initialized");
+}
+
+// Create bhajan audio task
+void createBhajanTask() {
+    BaseType_t result = xTaskCreatePinnedToCore(
+        bhajanAudioTask,
+        "Bhajan Audio Task",
+        8192,  // Larger stack for HTTP streaming
+        NULL,
+        2,     // Lower priority than main audio
+        &bhajanAudioTaskHandle,
+        1      // Core 1 (application core)
+    );
+    
+    if (result != pdPASS) {
+        Serial.println("Failed to create bhajan audio task");
+    } else {
+        Serial.println("Bhajan audio task created successfully");
+    }
+}
+
+// Initialize WebSocket with bhajan support
+void initWebSocketWithBhajanSupport() {
+    // Initialize existing WebSocket
+    String path = "/ws/device/" + String(deviceId);
+    websocketSetup(ws_server, ws_port, path.c_str());
+    
+    // Initialize bhajan audio system
+    initBhajanAudio();
+    
+    Serial.println("WebSocket with bhajan support initialized");
 }

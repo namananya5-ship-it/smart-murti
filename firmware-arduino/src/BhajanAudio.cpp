@@ -239,15 +239,20 @@ void stopBhajan() {
 }
 
 // Handle bhajan command from WebSocket
-void handleBhajanCommand(const char* command, int bhajanId) {
-    Serial.print("Received bhajan command: ");
-    Serial.println(command);
+void handleBhajanCommand(const char* command, int bhajanId, const char* url) {
+    Serial.printf("Received bhajan command: %s, id: %d\n", command, bhajanId);
     
     if (strcmp(command, "play") == 0) {
-        // For play command, we need the URL and name
-        // This would be handled by handleBhajanPlayMessage
-        if (currentBhajan.url.length() > 0) {
-            bhajanPlaybackRequested = true;
+        if (url) {
+            // The name is not sent from the server, we can use a placeholder
+            startBhajanPlayback(url, "Playing Bhajan", bhajanId);
+        } else {
+            // If no URL, maybe resume if paused? Or play default.
+            // For now, we require a URL to play.
+            Serial.println("Play command received without a URL.");
+            if (currentBhajan.status == BHAJAN_PAUSED) {
+                resumeBhajan();
+            }
         }
     } else if (strcmp(command, "pause") == 0) {
         pauseBhajan();
