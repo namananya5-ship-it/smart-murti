@@ -4,7 +4,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import {
     Play,
     Pause,
-    Square,
+    StopCircle,
     Volume2,
     Music,
     Clock,
@@ -325,7 +325,7 @@ export function BhajanPlayer({
                                         className="p-1 text-gray-500 hover:text-gray-600 transition-colors"
                                         title="Stop"
                                     >
-                                        <Square className="w-4 h-4" />
+                                        <StopCircle className="w-4 h-4" />
                                     </button>
                                 </div>
                             )}
