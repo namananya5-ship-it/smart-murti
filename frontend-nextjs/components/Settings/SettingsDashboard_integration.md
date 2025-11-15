@@ -3,6 +3,7 @@
 
 // 1. Import the BhajanSettings component
 import { BhajanSettings } from "./BhajanSettings";
+import AppSettings from "../../app/components/Settings/AppSettings";
 
 // 2. Add deviceId and authToken to the component props
 interface SettingsDashboardProps {
