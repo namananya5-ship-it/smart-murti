@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { Play, Pause, Stop, Music } from 'lucide-react';
+import { Play, Pause, Square, Music } from 'lucide-react';
 
 interface Bhajan {
     id: number;
@@ -69,7 +69,7 @@ export function BhajanList({ deviceId, authToken, className = "" }: BhajanListPr
 
             const data = await response.json();
             setDeviceStatus(data.status);
-            
+
             // Update playing bhajan based on device status
             if (data.status.current_bhajan_status === 'playing' && data.status.selected_bhajan) {
                 setPlayingBhajan(data.status.selected_bhajan.id);
@@ -85,7 +85,7 @@ export function BhajanList({ deviceId, authToken, className = "" }: BhajanListPr
     const playBhajan = async (bhajanId: number) => {
         try {
             setError(null);
-            
+
             const response = await fetch('/api/bhajans/play', {
                 method: 'POST',
                 headers: {
@@ -103,7 +103,7 @@ export function BhajanList({ deviceId, authToken, className = "" }: BhajanListPr
             }
 
             setPlayingBhajan(bhajanId);
-            
+
             // Refresh device status after a short delay
             setTimeout(() => {
                 fetchDeviceStatus();
@@ -117,7 +117,7 @@ export function BhajanList({ deviceId, authToken, className = "" }: BhajanListPr
     const controlPlayback = async (action: 'pause' | 'stop') => {
         try {
             setError(null);
-            
+
             const response = await fetch('/api/bhajans/control', {
                 method: 'POST',
                 headers: {
@@ -140,7 +140,7 @@ export function BhajanList({ deviceId, authToken, className = "" }: BhajanListPr
                 // For pause, keep the bhajan ID but update status
                 setPlayingBhajan(playingBhajan);
             }
-            
+
             // Refresh device status
             setTimeout(() => {
                 fetchDeviceStatus();
@@ -187,7 +187,7 @@ export function BhajanList({ deviceId, authToken, className = "" }: BhajanListPr
             <div className={`bhajan-list-error ${className}`}>
                 <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
                     <div className="text-red-800">Error: {error}</div>
-                    <button 
+                    <button
                         onClick={() => {
                             setError(null);
                             fetchBhajans();
@@ -244,7 +244,7 @@ export function BhajanList({ deviceId, authToken, className = "" }: BhajanListPr
                                 className="p-2 bg-gray-500 text-white rounded hover:bg-gray-600 transition-colors"
                                 title="Stop"
                             >
-                                <Stop className="w-4 h-4" />
+                                <Square className="w-4 h-4" />
                             </button>
                         </div>
                     </div>
@@ -254,17 +254,17 @@ export function BhajanList({ deviceId, authToken, className = "" }: BhajanListPr
             {/* Bhajan List */}
             <div className="space-y-2">
                 {bhajans.map((bhajan) => {
-                    const isPlaying = playingBhajan === bhajan.id && 
+                    const isPlaying = playingBhajan === bhajan.id &&
                                     deviceStatus?.current_bhajan_status === 'playing';
                     const isSelected = deviceStatus?.selected_bhajan?.id === bhajan.id;
-                    
+
                     return (
                         <div
                             key={bhajan.id}
                             className={`
                                 bhajan-item p-3 rounded-lg border transition-all
-                                ${isSelected 
-                                    ? 'border-orange-300 bg-orange-50' 
+                                ${isSelected
+                                    ? 'border-orange-300 bg-orange-50'
                                     : 'border-gray-200 bg-white hover:border-orange-200'
                                 }
                             `}
@@ -278,7 +278,7 @@ export function BhajanList({ deviceId, authToken, className = "" }: BhajanListPr
                                         Added {new Date(bhajan.created_at).toLocaleDateString()}
                                     </div>
                                 </div>
-                                
+
                                 <div className="flex items-center space-x-2">
                                     {isPlaying ? (
                                         <button
