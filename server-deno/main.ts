@@ -49,6 +49,12 @@ const corsHeaders = {
 wss.on("connection", async (ws: WebSocket, payload: IPayload) => {
     const { user, supabase, deviceId } = payload;
 
+    if (!deviceId) {
+        console.error("No deviceId in payload");
+        ws.close(1011, "No deviceId in payload");
+        return;
+    }
+
     addConnection(deviceId, ws);
 
     ws.on("close", () => {
