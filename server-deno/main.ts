@@ -246,5 +246,5 @@ async function handleBhajanApi(req: Request, path: string): Promise<Response> {
 
 
 const port = parseInt(Deno.env.get("PORT") || "8000");
-console.log(`Server running on http://localhost:${port}`);
+console.log(`Server running on port ${port}`);
 serve(handler, { port });
