@@ -1,3 +1,4 @@
+// Full content of dev-vani/frontend-nextjs/components/BhajanList.tsx with corrections
 "use client";
 
 import React, { useState, useEffect } from 'react';
@@ -71,7 +72,7 @@ export function BhajanList({ deviceId, authToken, className = "" }: BhajanListPr
             setDeviceStatus(data.status);
 
             // Update playing bhajan based on device status
-            if (data.status.current_bhajan_status === 'playing' && data.status.selected_bhajan) {
+            if (data.status.selected_bhajan) {
                 setPlayingBhajan(data.status.selected_bhajan.id);
             } else {
                 setPlayingBhajan(null);
@@ -113,8 +114,8 @@ export function BhajanList({ deviceId, authToken, className = "" }: BhajanListPr
         }
     };
 
-    // Control playback (pause/stop)
-    const controlPlayback = async (action: 'pause' | 'stop') => {
+    // Control playback (pause/stop/resume)
+    const controlPlayback = async (action: 'pause' | 'stop' | 'resume') => {
         try {
             setError(null);
 
@@ -136,9 +137,8 @@ export function BhajanList({ deviceId, authToken, className = "" }: BhajanListPr
 
             if (action === 'stop') {
                 setPlayingBhajan(null);
-            } else {
-                // For pause, keep the bhajan ID but update status
-                setPlayingBhajan(playingBhajan);
+            } else if (action === 'pause' && deviceStatus?.selected_bhajan) {
+                setPlayingBhajan(deviceStatus.selected_bhajan.id);
             }
 
             // Refresh device status
@@ -239,6 +239,15 @@ export function BhajanList({ deviceId, authToken, className = "" }: BhajanListPr
                                     <Pause className="w-4 h-4" />
                                 </button>
                             )}
+                            {deviceStatus.current_bhajan_status === 'paused' && (
+                                <button
+                                    onClick={() => controlPlayback('resume')}
+                                    className="p-2 bg-green-500 text-white rounded hover:bg-green-600 transition-colors"
+                                    title="Resume"
+                                >
+                                    <Play className="w-4 h-4" />
+                                </button>
+                            )}
                             <button
                                 onClick={() => controlPlayback('stop')}
                                 className="p-2 bg-gray-500 text-white rounded hover:bg-gray-600 transition-colors"
@@ -254,9 +263,9 @@ export function BhajanList({ deviceId, authToken, className = "" }: BhajanListPr
             {/* Bhajan List */}
             <div className="space-y-2">
                 {bhajans.map((bhajan) => {
-                    const isPlaying = playingBhajan === bhajan.id &&
-                                    deviceStatus?.current_bhajan_status === 'playing';
                     const isSelected = deviceStatus?.selected_bhajan?.id === bhajan.id;
+                    const isPlaying = isSelected && deviceStatus?.current_bhajan_status === 'playing';
+                    const isPaused = isSelected && deviceStatus?.current_bhajan_status === 'paused';
 
                     return (
                         <div
@@ -287,6 +296,14 @@ export function BhajanList({ deviceId, authToken, className = "" }: BhajanListPr
                                             title="Pause"
                                         >
                                             <Pause className="w-4 h-4" />
+                                        </button>
+                                    ) : isPaused ? (
+                                        <button
+                                            onClick={() => controlPlayback('resume')}
+                                            className="p-2 bg-green-500 text-white rounded-full hover:bg-green-600 transition-colors"
+                                            title="Resume"
+                                        >
+                                            <Play className="w-4 h-4" />
                                         </button>
                                     ) : (
                                         <button
