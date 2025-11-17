@@ -96,6 +96,9 @@ const gpio_num_t BUTTON_PIN = GPIO_NUM_45;
 // If you prefer to use the same button for bhajan control, leave this unused.
 const gpio_num_t BHAJAN_BUTTON_PIN = GPIO_NUM_2;
 
+// Firmware version identifier
+const char *FIRMWARE_VERSION = "v1.0";
+
 // ----------------- SSL Certificates -----------------
 
 #ifdef PROD_MODE

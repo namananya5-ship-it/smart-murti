@@ -13,62 +13,15 @@ extern TaskHandle_t micTaskHandle;
 extern TaskHandle_t networkTaskHandle;
 TaskHandle_t bhajanAudioTaskHandle = NULL;
 
-// Global variables
-int currentVolume = 100;
-float pitchFactor = 1.0;
-String deviceId = "";
-bool isWebSocketConnected = false;
+// Global variables (shared definitions moved to Audio.cpp)
 
 // Function prototypes
 void bhajanButtonHandler();
 void initBhajanSystem();
 void createBhajanTask();
 
-// Audio task modification to handle bhajan/AI audio conflicts
-void audioStreamTask(void *parameter) {
-    while (1) {
-        // Check if bhajan is playing - if so, pause AI audio
-        if (isBhajanPlaying()) {
-            // Pause AI audio output
-            i2s_stop(I2S_PORT_OUT);
-            vTaskDelay(100 / portTICK_PERIOD_MS);
-            continue;
-        }
-        
-        // Resume AI audio if bhajan stopped
-        if (!isBhajanPlaying()) {
-            i2s_start(I2S_PORT_OUT);
-        }
-        
-        // Continue with original audio stream logic
-        // ... (existing audioStreamTask code)
-        
-        vTaskDelay(10 / portTICK_PERIOD_MS);
-    }
-}
-
-// Network task with bhajan status updates
-void networkTask(void *parameter) {
-    // Existing network task setup
-    String path = "/ws/device/" + String(deviceId);
-    websocketSetup(ws_server, ws_port, path.c_str());
-    
-    while (1) {
-        // Handle WebSocket
-        webSocket.loop();
-        
-        // Send periodic bhajan status updates
-        static uint32_t lastBhajanUpdate = 0;
-        uint32_t now = millis();
-        
-        if (now - lastBhajanUpdate > 5000) {
-            sendBhajanStatusUpdate();
-            lastBhajanUpdate = now;
-        }
-        
-        vTaskDelay(10 / portTICK_PERIOD_MS);
-    }
-}
+// Audio and network task implementations are provided in `Audio.cpp`.
+// Keep prototypes in headers and avoid duplicate definitions here.
 
 #define TOUCH_THRESHOLD 28000
 #define REQUIRED_RELEASE_CHECKS                                                \
@@ -399,14 +352,6 @@ void createBhajanTask() {
     }
 }
 
-// Initialize WebSocket with bhajan support
-void initWebSocketWithBhajanSupport() {
-    // Initialize existing WebSocket
-    String path = "/ws/device/" + String(deviceId);
-    websocketSetup(ws_server, ws_port, path.c_str());
-    
-    // Initialize bhajan audio system
-    initBhajanAudio();
-    
-    Serial.println("WebSocket with bhajan support initialized");
-}
+// `initWebSocketWithBhajanSupport` is implemented in `WebSocketHandler_bhajan.cpp`.
+// Keep the prototype in `WebSocketHandler.h`; do not define it here to avoid
+// duplicate symbol definitions at link time.

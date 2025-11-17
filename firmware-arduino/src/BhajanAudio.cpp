@@ -13,10 +13,10 @@ SemaphoreHandle_t bhajanMutex = NULL;
 // Static variables for internal use
 static WiFiClient bhajanClient;
 static HTTPClient http;
-static uint8_t audioBuffer[BHAJAN_BUFFER_SIZE];
+// Use a dedicated temporary buffer for streaming to avoid conflicting with shared audioBuffer
+static uint8_t bhajanTempBuffer[BHAJAN_BUFFER_SIZE];
 static uint32_t playbackStartTime = 0;
 static uint32_t pausedPosition = 0;
-static int currentVolume = 100; // 0-100 percentage
 
 // Initialize bhajan audio system
 void initBhajanAudio() {
@@ -104,21 +104,21 @@ void streamBhajanAudio(const char* url) {
                 
                 // Read audio data
                 if (stream->available()) {
-                    size_t bytesRead = stream->readBytes(audioBuffer, BHAJAN_BUFFER_SIZE);
+                    size_t bytesRead = stream->readBytes(bhajanTempBuffer, BHAJAN_BUFFER_SIZE);
                     
                     if (bytesRead > 0) {
                         // Apply volume scaling
                         if (currentVolume < 100) {
-                            for (size_t i = 0; i < bytesRead; i += 2) {
-                                int16_t sample = (audioBuffer[i + 1] << 8) | audioBuffer[i];
+                            for (size_t i = 0; i + 1 < bytesRead; i += 2) {
+                                int16_t sample = (bhajanTempBuffer[i + 1] << 8) | bhajanTempBuffer[i];
                                 sample = (sample * currentVolume) / 100;
-                                audioBuffer[i] = sample & 0xFF;
-                                audioBuffer[i + 1] = (sample >> 8) & 0xFF;
+                                bhajanTempBuffer[i] = sample & 0xFF;
+                                bhajanTempBuffer[i + 1] = (sample >> 8) & 0xFF;
                             }
                         }
-                        
+
                         // Write to I2S
-                        i2s_write(I2S_PORT_OUT, audioBuffer, bytesRead, &bytesWritten, portMAX_DELAY);
+                        i2s_write(I2S_PORT_OUT, bhajanTempBuffer, bytesRead, &bytesWritten, portMAX_DELAY);
                         
                         // Update position
                         xSemaphoreTake(bhajanMutex, portMAX_DELAY);

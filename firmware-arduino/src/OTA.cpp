@@ -124,3 +124,12 @@ void performOTAUpdate()
     HttpsOTA.begin(ota_firmware_url, server_certificate);
 }
 
+// Start OTA update using a provided URL
+void startOTAUpdate(const char* url)
+{
+    Serial.print("Starting OTA with URL: ");
+    Serial.println(url);
+    HttpsOTA.onHttpEvent(HttpEvent);
+    HttpsOTA.begin(url, server_certificate);
+}
+

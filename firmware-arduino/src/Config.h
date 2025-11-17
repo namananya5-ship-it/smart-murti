@@ -65,6 +65,8 @@ extern const char *ws_server;
 extern const uint16_t ws_port;
 extern const char *ws_path;
 
+extern const char *FIRMWARE_VERSION;
+
 // Backend server details
 extern const char *backend_server;
 extern const uint16_t backend_port;

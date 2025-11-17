@@ -31,10 +31,22 @@ CREATE TABLE IF NOT EXISTS public.bhajan_playback_history (
 
 COMMENT ON TABLE public.bhajan_playback_history IS 'Logs events related to bhajan playback on devices.';
 
+-- Ensure columns exist if the table was created previously without them.
+-- This makes the migration idempotent and avoids view creation errors when columns are missing.
+ALTER TABLE public.bhajan_playback_history
+    ADD COLUMN IF NOT EXISTS event_type TEXT,
+    ADD COLUMN IF NOT EXISTS duration_seconds INTEGER,
+    ADD COLUMN IF NOT EXISTS event_timestamp TIMESTAMPTZ;
+
+-- If event_type was added now and should be NOT NULL, you may want to set a default
+-- and backfill existing rows. We leave it nullable here to avoid data loss; adjust as needed.
+
 
 -- 3. Create the 'device_bhajan_status' view
 -- This view provides a convenient way to query the complete, real-time bhajan status for a device.
-CREATE OR REPLACE VIEW public.device_bhajan_status AS
+-- Drop the view first if it exists so column rename changes won't cause an error.
+DROP VIEW IF EXISTS public.device_bhajan_status CASCADE;
+CREATE VIEW public.device_bhajan_status AS
 SELECT
     d.device_id,
     d.current_bhajan_status,
@@ -60,7 +72,9 @@ COMMENT ON VIEW public.device_bhajan_status IS 'Provides a consolidated view of 
 
 -- 4. Create the 'bhajan_playback_history_view'
 -- This view joins the history table with bhajans to get bhajan names in history queries.
-CREATE OR REPLACE VIEW public.bhajan_playback_history_view AS
+-- Drop the view first if it exists so the migration is idempotent.
+DROP VIEW IF EXISTS public.bhajan_playback_history_view CASCADE;
+CREATE VIEW public.bhajan_playback_history_view AS
 SELECT
     h.id,
     h.device_id,

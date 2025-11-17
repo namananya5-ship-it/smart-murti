@@ -7,6 +7,10 @@
 SemaphoreHandle_t wsMutex;
 WebSocketsClient webSocket;
 
+// Device identification and connection state (moved here to provide single definition)
+String deviceId = "";
+bool isWebSocketConnected = false;
+
 // TASK HANDLES
 TaskHandle_t speakerTaskHandle = NULL;
 TaskHandle_t micTaskHandle = NULL;
@@ -52,6 +56,8 @@ BufferPrint bufferPrint(audioBuffer);
 OpusAudioDecoder opusDecoder;  //access guarded by wsmutex
 BufferRTOS<uint8_t> audioBuffer(AUDIO_BUFFER_SIZE, AUDIO_CHUNK_SIZE);  //producer: networkTask, consumer: audioStreamTask. Thread safe in single producer->single consumer scenario.
 I2SStream i2s; //access from audioStreamTask only
+// Flag that indicates the Opus decoder has been initialized and is safe to call
+volatile bool opusDecoderReady = false;
 
 // OLD with no pitch shift
 VolumeStream volume(i2s); //access from audioStreamTask only
@@ -65,6 +71,10 @@ StreamCopy pitchCopier(volumePitch, queue);
 
 AudioInfo info(SAMPLE_RATE, CHANNELS, BITS_PER_SAMPLE);
 volatile bool i2sOutputFlushScheduled = false;
+// Diagnostics: track frames received/decoded after RESPONSE.CREATED
+volatile unsigned long lastResponseCreatedTime = 0;
+volatile int framesReceivedThisTurn = 0;
+volatile unsigned long lastDecodedBytes = 0;
 
 unsigned long getSpeakingDuration() {
     if (deviceState == SPEAKING && speakingStartTime > 0) {
@@ -120,6 +130,8 @@ void audioStreamTask(void *parameter) {
     xSemaphoreTake(wsMutex, portMAX_DELAY);
     opusDecoder.setOutput(bufferPrint);
     opusDecoder.begin(cfg);
+    // Mark decoder as ready for incoming binary frames
+    opusDecoderReady = true;
     xSemaphoreGive(wsMutex);
 
     audioBuffer.setReadMaxWait(0);
@@ -333,6 +345,10 @@ void webSocketEvent(WStype_t type, const uint8_t *payload, size_t length)
                 deviceState = PROCESSING; 
             } else if (strcmp((char*)msg.c_str(), "RESPONSE.CREATED") == 0) {
                 Serial.println("Received RESPONSE.CREATED, transitioning to speaking");
+                // reset diagnostics for this speaking turn
+                framesReceivedThisTurn = 0;
+                lastDecodedBytes = 0;
+                lastResponseCreatedTime = millis();
                 transitionToSpeaking();
             } else if (strcmp((char*)msg.c_str(), "SESSION.END") == 0) {
                 Serial.println("Received SESSION.END, going to sleep");
@@ -362,10 +378,27 @@ void webSocketEvent(WStype_t type, const uint8_t *payload, size_t length)
             break;
         }
 
+        // Only process if the Opus decoder is ready, otherwise skip
+        if (!opusDecoderReady) {
+            Serial.println("Skipping audio: Opus decoder not ready yet");
+            break;
+        }
+
         // Otherwise process the audio data normally
-        size_t processed = opusDecoder.write(payload, length);
-        if (processed != length) {
-            Serial.printf("Warning: Only processed %d/%d bytes\n", processed, length);
+        {
+            xSemaphoreTake(wsMutex, portMAX_DELAY); // ensure decoder internal state access is serialized
+            size_t processed = opusDecoder.write(payload, length);
+            xSemaphoreGive(wsMutex);
+
+            // Diagnostics logging: increment per-turn counters and report
+            framesReceivedThisTurn++;
+            lastDecodedBytes = processed;
+
+            Serial.printf("[WSc] binary frame received len=%u decoded=%u framesThisTurn=%d\n", (unsigned)length, (unsigned)processed, framesReceivedThisTurn);
+
+            if (processed == 0) {
+                Serial.println("Warning: decoder returned 0 processed bytes for this frame");
+            }
         }
         break;
       }

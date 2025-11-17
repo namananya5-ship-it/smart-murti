@@ -8,6 +8,7 @@ extern const char *ota_firmware_url;
 void performOTAUpdate();
 void markOTAUpdateComplete();
 void loopOTA();
+void startOTAUpdate(const char* url);
 void setOTAStatusInNVS(OtaStatus status);
 void getOTAStatusFromNVS();
 

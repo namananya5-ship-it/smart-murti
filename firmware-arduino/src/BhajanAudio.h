@@ -3,7 +3,7 @@
 
 #include <Arduino.h>
 #include <WiFiClient.h>
-#include <HTTPClient>
+#include <HTTPClient.h>
 #include <driver/i2s.h>
 #include "Audio.h"
 #include "Config.h"
@@ -33,6 +33,7 @@ extern SemaphoreHandle_t bhajanMutex;
 
 // Function declarations
 void bhajanAudioTask(void *parameter);
+void initBhajanAudio();
 void startBhajanPlayback(const char* url, const char* name, int id = -1);
 void pauseBhajan();
 void resumeBhajan();

@@ -1,6 +1,7 @@
 // WebSocket Handler modifications for Bhajan support
 #include "WebSocketHandler.h"
 #include "BhajanAudio.h"
+#include "OTA.h"
 
 // Extended WebSocket message handling with bhajan support
 void webSocketEvent(WStype_t type, uint8_t * payload, size_t length) {
@@ -124,10 +125,8 @@ void handleGenericWebSocketMessage(JsonDocument& doc) {
     // Handle existing message types (volume, OTA, etc.)
     if (strcmp(type, "volume") == 0) {
         int vol = doc["volume"];
-        setVolume(vol);
+        // Update global/current bhajan volume
         currentVolume = vol; // Update global volume
-        
-        // Also set bhajan volume
         setBhajanVolume(vol);
         
     } else if (strcmp(type, "ota") == 0) {
@@ -249,7 +248,7 @@ void sendEnhancedStatusUpdate() {
         
         // Audio info
         doc["volume"] = currentVolume;
-        doc["pitch_factor"] = pitchFactor;
+        doc["pitch_factor"] = currentPitchFactor;
         
         String jsonString;
         serializeJson(doc, jsonString);
