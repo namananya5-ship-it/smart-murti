@@ -11,19 +11,25 @@ export async function POST(request: Request) {
   const denoUrl = process.env.DENO_SERVER_URL || 'http://localhost:8000';
 
   try {
-    await fetch(`${denoUrl}/bhajan/control`, {
+    const authHeader = request.headers.get('authorization') || undefined;
+
+    const res = await fetch(`${denoUrl}/api/bhajans/control`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        ...(authHeader ? { 'Authorization': authHeader } : {}),
       },
-      body: JSON.stringify({
-        deviceId,
-        action,
-      }),
+      body: JSON.stringify({ deviceId, action }),
     });
+
+    if (!res.ok) {
+      const text = await res.text();
+      console.error('Deno control API returned error:', res.status, text);
+      return NextResponse.json({ error: 'Failed to invoke control on server' }, { status: 502 });
+    }
   } catch (e) {
-    // Ignore errors for now
     console.error('Error sending control command to Deno server', e);
+    return NextResponse.json({ error: 'Failed to contact server' }, { status: 502 });
   }
 
   return NextResponse.json({ message: `Action '${action}' sent to device ${deviceId}` });

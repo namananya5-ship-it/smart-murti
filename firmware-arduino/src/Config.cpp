@@ -92,6 +92,9 @@ const int I2S_SD_OUT = 14;
 
 // Button Pin (matches your wiring)
 const gpio_num_t BUTTON_PIN = GPIO_NUM_45;
+// Optional dedicated Bhajan button pin (unused by default). Choose a safe GPIO.
+// If you prefer to use the same button for bhajan control, leave this unused.
+const gpio_num_t BHAJAN_BUTTON_PIN = GPIO_NUM_2;
 
 // ----------------- SSL Certificates -----------------
 

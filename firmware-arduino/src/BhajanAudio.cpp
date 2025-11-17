@@ -1,6 +1,7 @@
 #include "BhajanAudio.h"
 #include "WebSocketHandler.h"
 #include "Config.h"
+#include "LEDHandler.h"
 #include <ArduinoJson.h>
 
 // Global variables
@@ -193,6 +194,8 @@ void startBhajanPlayback(const char* url, const char* name, int id) {
     xSemaphoreGive(bhajanMutex);
     
     Serial.println("Bhajan playback requested");
+    // Visual feedback: quick LED blink to indicate bhajan requested/starting
+    flashBhajanStart();
 }
 
 // Pause bhajan playback
@@ -207,6 +210,8 @@ void pauseBhajan() {
     
     xSemaphoreGive(bhajanMutex);
     sendBhajanStatusUpdate();
+    // Visual feedback: indicate paused
+    flashBhajanPause();
 }
 
 // Resume bhajan playback
@@ -221,6 +226,8 @@ void resumeBhajan() {
     
     xSemaphoreGive(bhajanMutex);
     sendBhajanStatusUpdate();
+    // Visual feedback: indicate resume
+    flashBhajanResume();
 }
 
 // Stop bhajan playback
@@ -236,6 +243,8 @@ void stopBhajan() {
     
     Serial.println("Bhajan stopped");
     sendBhajanStatusUpdate();
+    // Visual feedback: indicate stopped
+    flashBhajanStop();
 }
 
 // Handle bhajan command from WebSocket

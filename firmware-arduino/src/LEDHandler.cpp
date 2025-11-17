@@ -197,6 +197,43 @@ void staticYellow()
     digitalWrite(GREEN_LED_PIN, HIGH);
 }
 
+// Quick visual feedback helpers for bhajan events
+void flashBhajanStart()
+{
+    // Green blink to indicate bhajan started
+    digitalWrite(RED_LED_PIN, LOW);
+    digitalWrite(GREEN_LED_PIN, HIGH);
+    digitalWrite(BLUE_LED_PIN, LOW);
+    delay(200);
+}
+
+void flashBhajanPause()
+{
+    // Yellow blink to indicate pause
+    digitalWrite(RED_LED_PIN, HIGH);
+    digitalWrite(GREEN_LED_PIN, HIGH);
+    digitalWrite(BLUE_LED_PIN, LOW);
+    delay(150);
+}
+
+void flashBhajanResume()
+{
+    // Cyan blink to indicate resume
+    digitalWrite(RED_LED_PIN, LOW);
+    digitalWrite(GREEN_LED_PIN, HIGH);
+    digitalWrite(BLUE_LED_PIN, HIGH);
+    delay(150);
+}
+
+void flashBhajanStop()
+{
+    // Red blink to indicate stop
+    digitalWrite(RED_LED_PIN, HIGH);
+    digitalWrite(GREEN_LED_PIN, LOW);
+    digitalWrite(BLUE_LED_PIN, LOW);
+    delay(200);
+}
+
 static const uint8_t colorSequence[][3] = {
     {0, 255, 255}, // Cyan   (R=0,   G=255, B=255)
     {255, 0, 255}, // yellow   (R=255, G=0,   B=255)

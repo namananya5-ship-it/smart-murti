@@ -3,6 +3,7 @@
 
 // 1. Add import for bhajan functions
 import { sendBhajanCommandToDevice } from "./bhajans.ts";
+import { addConnection, removeConnection } from "./realtime/connections.ts";
 
 // 2. Add bhajan message handling in the WebSocket connection handler
 // Find the switch(provider) block and add bhajan support before it:
@@ -132,18 +133,38 @@ server.on("upgrade", async (req, socket, head) => {
     if (url.pathname.startsWith('/ws/device/') && url.pathname.includes('/bhajan')) {
         // Handle bhajan WebSocket connections
         const deviceId = url.pathname.split('/')[3];
-        
+
         wss.handleUpgrade(req, socket, head, (ws) => {
-            // Handle bhajan-specific WebSocket connection
+            // Register this ws under a bhajan-specific key so server can target it
+            const connKey = `${deviceId}-bhajan`;
+            try {
+                addConnection(connKey, ws as any);
+                console.log(`Registered bhajan websocket for ${connKey}`);
+            } catch (e) {
+                console.warn('Failed to add connection to map:', e);
+            }
+
             ws.on('message', (data) => {
                 try {
                     const message = JSON.parse(data.toString());
-                    if (message.type === 'bhajan_command') {
-                        // Forward bhajan commands to device
-                        sendBhajanCommandToDevice(deviceId, message.command, message.bhajan_id);
+                    // Accept forwarded bhajan commands from other parts of the system
+                    if (message.type === 'bhajan_play') {
+                        // Device is informing server or other peers; handle if needed
+                        // (No-op for now)
+                    } else if (message.type === 'bhajan_control') {
+                        // No-op server-side; device control comes from server
                     }
                 } catch (error) {
-                    console.error('Error handling bhajan message:', error);
+                    console.error('Error handling bhajan incoming message:', error);
+                }
+            });
+
+            ws.on('close', () => {
+                try {
+                    removeConnection(connKey);
+                    console.log(`Removed bhajan websocket for ${connKey}`);
+                } catch (e) {
+                    console.warn('Failed to remove connection:', e);
                 }
             });
         });

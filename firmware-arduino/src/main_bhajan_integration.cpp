@@ -43,7 +43,15 @@ void setup() {
     btn->attachLongPressUpEventCb(&onButtonLongPressUpEventCb, NULL);
     btn->attachDoubleClickEventCb(&onButtonDoubleClickCb, NULL);
     btn->attachClickEventCb([](void* btn, void* data) {
-        // Single click handles bhajan control
+        // Single click on the main button handles bhajan control
+        handleBhajanButtonPress();
+    }, NULL);
+
+    // Optional: dedicated bhajan button
+    // If you wire a separate physical button for Bhajan control, connect it to `BHAJAN_BUTTON_PIN` (default GPIO2)
+    // and the code below will attach the same click handler.
+    Button *bhajanBtn = new Button(BHAJAN_BUTTON_PIN, false);
+    bhajanBtn->attachClickEventCb([](void* btn, void* data) {
         handleBhajanButtonPress();
     }, NULL);
 #endif

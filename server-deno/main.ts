@@ -1,6 +1,9 @@
 // Fixed server-deno main.ts for Deno Deploy compatibility
 import { Hono } from "https://deno.land/x/hono@v3.11.7/mod.ts";
 import { cors } from "https://deno.land/x/hono@v3.11.7/middleware.ts";
+import { getSupabaseClient } from './supabase.ts';
+import { authenticateUser } from './utils.ts';
+import { addConnection, removeConnection } from './realtime/connections.ts';
 
 const app = new Hono();
 
@@ -161,3 +164,65 @@ app.get("/api/categories", async (c) => {
 // Export the Hono app for Deno Deploy
 // This is the key fix - don't use app.listen(), just export the app
 export default app;
+
+// Deno Deploy compatible WebSocket endpoint for bhajan control
+// Route: /ws/device/:deviceId/bhajan
+app.get('/ws/device/:deviceId/bhajan', async (c) => {
+  const deviceId = c.req.param('deviceId');
+  const request = c.req;
+
+  // Simple auth: check Authorization header and validate user. If you have different auth flow, adapt.
+  const authHeader = request.headers.get('authorization') || '';
+  const token = authHeader.replace('Bearer ', '');
+
+  if (!token) {
+    return c.text('Unauthorized', 401);
+  }
+
+  try {
+    const supabase = getSupabaseClient(token);
+    await authenticateUser(supabase, token);
+  } catch (err) {
+    console.warn('WebSocket auth failed', err);
+    return c.text('Unauthorized', 401);
+  }
+
+  // Upgrade to WebSocket using WebSocketPair (supported in Deno Deploy)
+  const pair = new WebSocketPair();
+  const [client, server] = Object.values(pair);
+
+  // Accept the server side and register
+  try {
+    (server as any).accept?.();
+  } catch (e) {
+    // Some runtimes require server.accept(); ignore if not available
+  }
+
+  const connKey = `${deviceId}-bhajan`;
+  addConnection(connKey, server);
+  console.log(`Registered bhajan websocket for ${connKey}`);
+
+  server.onmessage = (evt: any) => {
+    try {
+      const data = typeof evt.data === 'string' ? evt.data : new TextDecoder().decode(evt.data);
+      const msg = JSON.parse(data);
+      if (msg && msg.type && msg.type.startsWith('bhajan')) {
+        console.log(`Received bhajan message from device ${connKey}:`, msg.type);
+      }
+    } catch (e) {
+      console.error('Error parsing ws message', e);
+    }
+  };
+
+  server.onclose = () => {
+    try {
+      removeConnection(connKey);
+      console.log(`Bhajan websocket closed for ${connKey}`);
+    } catch (e) {
+      console.warn('Error removing connection', e);
+    }
+  };
+
+  // Return the client side to complete the upgrade
+  return new Response(null, { status: 101, webSocket: client as any });
+});
